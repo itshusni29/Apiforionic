@@ -4,87 +4,129 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
-        $books = Book::paginate(10);
-        return response()->json([
-            'status' => 'success',
-            'data' => $books
-        ]);
+        return Book::all();
     }
 
-    
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
-        $book = Book::create($request->all());
-        return response()->json([
-            'status' => 'success',
-            'data' => $book
+        $request->validate([
+            'judul' => 'required',
+            'pengarang' => 'required',
+            'penerbit' => 'required',
+            'tahun_terbit' => 'required|date',
+            'kategori' => 'required', 
+            'jumlah_buku' => 'required|integer',
+            'stock_forborrow' => 'nullable|integer',
+            'deskripsi' => 'required',
+            'ratings' => 'nullable|numeric|min:0|max:10',
+            'cover' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
         ]);
+
+        $book = new Book();
+        $book->judul = $request->judul;
+        $book->pengarang = $request->pengarang;
+        $book->penerbit = $request->penerbit;
+        $book->tahun_terbit = $request->tahun_terbit;
+        $book->kategori = $request->kategori; // Tambahkan kategori ke dalam model
+        $book->jumlah_buku = $request->jumlah_buku;
+        $book->stock_forborrow = $request->stock_forborrow; // Tambahkan stock_forborrow ke dalam model
+        $book->deskripsi = $request->deskripsi;
+        $book->ratings = $request->ratings;
+
+        if ($request->hasFile('cover')) {
+            $cover = $request->file('cover');
+            $fileName = time() . '.' . $cover->getClientOriginalExtension();
+            $cover->storeAs('public/covers', $fileName); // Store file in storage directory
+            $book->cover = 'covers/' . $fileName; // Store relative path to the image
+        }
+
+        $book->save();
+
+        return response()->json(['message' => 'Book created successfully'], 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Book  $book
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Book $book)
+    public function show($id)
     {
-        //
-        return response()->json([
-            'status' => 'success',
-            'data' => $book
-        ]);
+        $book = Book::find($id);
+        if ($book) {
+            // Check if cover image exists
+            if ($book->cover) {
+                // Generate full URL for the cover image
+                $book->cover = asset('storage/' . $book->cover);
+            } else {
+                // If cover image doesn't exist, set it to null or an empty string
+                $book->cover = null; // or ''
+            }
+            return response()->json($book);
+        } else {
+            return response()->json(['message' => 'Book not found'], 404);
+        }
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Book  $book
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Book $book)
+    public function update(Request $request, $id)
     {
-        //
-        $book->update($request->all());
-        return response()->json([
-            'status' => 'success',
-            'data' => $book
+        $request->validate([
+            'judul' => 'required',
+            'pengarang' => 'required',
+            'penerbit' => 'required',
+            'tahun_terbit' => 'required|date',
+            'kategori' => 'required', 
+            'jumlah_buku' => 'required|integer',
+            'stock_forborrow' => 'nullable|integer',
+            'deskripsi' => 'required',
+            'ratings' => 'nullable|numeric|min:0|max:10',
+            'cover' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
         ]);
+
+        $book = Book::find($id);
+        if ($book) {
+            $book->judul = $request->judul;
+            $book->pengarang = $request->pengarang;
+            $book->penerbit = $request->penerbit;
+            $book->tahun_terbit = $request->tahun_terbit;
+            $book->kategori = $request->kategori;
+            $book->jumlah_buku = $request->jumlah_buku;
+            $book->stock_forborrow = $request->stock_forborrow;
+            $book->deskripsi = $request->deskripsi;
+            $book->ratings = $request->ratings;
+
+            if ($request->hasFile('cover')) {
+                $cover = $request->file('cover');
+                $fileName = time() . '.' . $cover->getClientOriginalExtension();
+                $cover->storeAs('public/covers', $fileName); // Store file in storage directory
+                // Hapus file cover lama jika ada
+                if ($book->cover) {
+                    Storage::delete('public/' . $book->cover);
+                }
+                $book->cover = 'covers/' . $fileName;
+            }
+
+            $book->save();
+
+            return response()->json(['message' => 'Book updated successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Book not found'], 404);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Book  $book
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Book $book)
+    public function destroy($id)
     {
-        //
-        $book->delete();
-        return response()->json([
-            'message' => 'Data berhasil dihapus'
-        ], 204);
+        $book = Book::find($id);
+        if ($book) {
+            // Hapus file cover jika ada sebelum menghapus buku
+            if ($book->cover) {
+                Storage::delete('public/' . $book->cover);
+            }
+            $book->delete();
+            return response()->json(['message' => 'Book deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Book not found'], 404);
+        }
     }
 }

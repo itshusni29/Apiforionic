@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateBooksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -19,10 +19,12 @@ return new class extends Migration
             $table->string('pengarang');
             $table->string('penerbit');
             $table->date('tahun_terbit');
-            $table->integer('jumlah_buku');
+            $table->string('kategori');
+            $table->unsignedInteger('jumlah_buku');
+            $table->unsignedInteger('stock_forborrow')->default(0);
             $table->text('deskripsi');
-            $table->string('cover');
-            $table->string('rating');
+            $table->float('ratings', 2, 1)->nullable(); 
+            $table->string('cover')->nullable();
             $table->timestamps();
         });
     }
@@ -36,4 +38,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('books');
     }
-};
+}
