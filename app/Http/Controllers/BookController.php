@@ -21,8 +21,7 @@ class BookController extends Controller
             'penerbit' => 'required',
             'tahun_terbit' => 'required|date',
             'kategori' => 'required', 
-            'jumlah_buku' => 'required|integer',
-            'stock_forborrow' => 'nullable|integer',
+            'total_stock' => 'required|integer',
             'deskripsi' => 'required',
             'ratings' => 'nullable|numeric|min:0|max:10',
             'cover' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
@@ -33,9 +32,9 @@ class BookController extends Controller
         $book->pengarang = $request->pengarang;
         $book->penerbit = $request->penerbit;
         $book->tahun_terbit = $request->tahun_terbit;
-        $book->kategori = $request->kategori; // Tambahkan kategori ke dalam model
-        $book->jumlah_buku = $request->jumlah_buku;
-        $book->stock_forborrow = $request->stock_forborrow; // Tambahkan stock_forborrow ke dalam model
+        $book->kategori = $request->kategori;
+        $book->total_stock = $request->total_stock;
+        $book->stock_available = $request->total_stock; // Set initial available stock to total stock
         $book->deskripsi = $request->deskripsi;
         $book->ratings = $request->ratings;
 
@@ -77,8 +76,7 @@ class BookController extends Controller
             'penerbit' => 'required',
             'tahun_terbit' => 'required|date',
             'kategori' => 'required', 
-            'jumlah_buku' => 'required|integer',
-            'stock_forborrow' => 'nullable|integer',
+            'total_stock' => 'required|integer',
             'deskripsi' => 'required',
             'ratings' => 'nullable|numeric|min:0|max:10',
             'cover' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
@@ -91,8 +89,8 @@ class BookController extends Controller
             $book->penerbit = $request->penerbit;
             $book->tahun_terbit = $request->tahun_terbit;
             $book->kategori = $request->kategori;
-            $book->jumlah_buku = $request->jumlah_buku;
-            $book->stock_forborrow = $request->stock_forborrow;
+            $book->total_stock = $request->total_stock;
+            $book->stock_available = $request->total_stock - $book->loans()->where('status', 'Dipinjam')->count(); // Adjust stock available
             $book->deskripsi = $request->deskripsi;
             $book->ratings = $request->ratings;
 
@@ -130,3 +128,4 @@ class BookController extends Controller
         }
     }
 }
+?>

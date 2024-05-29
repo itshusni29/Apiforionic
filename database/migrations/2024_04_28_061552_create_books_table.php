@@ -20,8 +20,8 @@ class CreateBooksTable extends Migration
             $table->string('penerbit');
             $table->date('tahun_terbit');
             $table->string('kategori');
-            $table->unsignedInteger('jumlah_buku');
-            $table->unsignedInteger('stock_forborrow')->default(0);
+            $table->unsignedInteger('total_stock');
+            $table->unsignedInteger('stock_available')->default(0);
             $table->text('deskripsi');
             $table->float('ratings', 2, 1)->nullable(); 
             $table->string('cover')->nullable();
@@ -39,3 +39,4 @@ class CreateBooksTable extends Migration
         Schema::dropIfExists('books');
     }
 }
+?>

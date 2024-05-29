@@ -2,29 +2,19 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\BookLoanController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\BookLoanHistoryController;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
 
 // Authentication routes
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
-Route::resource('books', BookController::class);
-
-
+Route::post('refresh', [AuthController::class, 'refresh']); // Add route for token refresh
 
 // Protected routes
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['jwt.auth'])->group(function () {
     
     // User resource routes
     Route::apiResource('users', UserController::class);
@@ -33,4 +23,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function () {
         return auth()->user();
     });
+    
+    // Book resource routes
+    Route::apiResource('books', BookController::class);
+    Route::post('/borrow/{bookId}', [BookLoanController::class, 'borrow']);
+    Route::post('/return/{loanId}', [BookLoanController::class, 'returnBook']);
+    // Wishlist routes
+    Route::get('/wishlists', [WishlistController::class, 'index']);
+    Route::post('/wishlists', [WishlistController::class, 'store']);
+    Route::delete('/wishlists/{id}', [WishlistController::class, 'destroy']);
+    // Loan history routes
+    Route::get('/loan-history', [BookLoanHistoryController::class, 'index']);
+
 });
+

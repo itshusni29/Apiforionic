@@ -37,3 +37,4 @@ class CreateBookLoanHistoryTable extends Migration
         Schema::dropIfExists('book_loan_history');
     }
 }
+?>

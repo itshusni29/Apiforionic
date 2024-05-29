@@ -22,10 +22,13 @@ class CreateBookLoansTable extends Migration
             $table->timestamp('tanggal_pengembalian')->nullable()->default(null);
             $table->timestamp('tanggal_pengembalian_aktual')->nullable()->default(null);
             $table->timestamps();
-            
+
             // Add foreign key constraints
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
+
+            // Add unique constraint to ensure one book per user at a time
+            $table->unique(['user_id', 'book_id', 'status']);
         });
     }
 
@@ -39,3 +42,4 @@ class CreateBookLoansTable extends Migration
         Schema::dropIfExists('book_loans');
     }
 }
+?>

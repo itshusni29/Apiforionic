@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('alamat');
             $table->string('nomor_telpon');
-            $table->string('roles');
+            $table->enum('roles', ['user', 'admin'])->default('user'); 
             $table->string('jenis_kelamin');
             $table->string('photo_profile')->nullable();
             $table->rememberToken();

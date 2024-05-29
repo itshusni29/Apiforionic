@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -44,13 +45,12 @@ class AuthController extends Controller
         ]);
 
         if ($user) {
-            $token = $user->createToken('API Token')->plainTextToken;
+            $token = JWTAuth::fromUser($user);
             return response()->json(['message' => 'User registered successfully', 'user' => $user, 'token' => $token], 201);
         } else {
             return response()->json(['message' => 'User registration failed'], 500);
         }
     }
-
 
     public function login(Request $request)
     {
@@ -58,23 +58,20 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-    
+
         $credentials = $request->only('email', 'password');
-        $remember = $request->boolean('remember'); // Ambil nilai 'remember' dari permintaan
-    
-        if (Auth::attempt($credentials, $remember)) {
+
+        if ($token = JWTAuth::attempt($credentials)) {
             $user = Auth::user();
-            $token = $user->createToken('API Token')->plainTextToken;
             return response()->json(['message' => 'Login successful', 'user' => $user, 'token' => $token]);
         }
-    
+
         return response()->json(['message' => 'Unauthorized'], 401);
     }
-    
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        JWTAuth::parseToken()->invalidate();
         return response()->json(['message' => 'Logout successful']);
     }
 }

@@ -22,6 +22,9 @@ class CreateWishlistsTable extends Migration
             // Define foreign key constraints
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
+
+            // Ensure unique wishlist items per user
+            $table->unique(['user_id', 'book_id']);
         });
     }
 
@@ -35,3 +38,4 @@ class CreateWishlistsTable extends Migration
         Schema::dropIfExists('wishlists');
     }
 }
+?>
