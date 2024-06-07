@@ -1,64 +1,193 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+Berikut adalah README yang diperbarui dengan penjelasan tambahan mengenai penggunaan JWT Auth dan fitur dari masing-masing controller:
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Apiforionic
 
-## About Laravel
+Selamat datang di proyek Apiforionic! README ini akan memandu Anda melalui proses kloning dan instalasi proyek di mesin lokal Anda serta memberikan gambaran tentang beberapa fitur yang ada.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Daftar Isi
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [Prasyarat](#prasyarat)
+- [Instalasi](#instalasi)
+  - [Kloning Repositori](#kloning-repositori)
+  - [Instalasi Dependensi](#instalasi-dependensi)
+  - [Konfigurasi Environment](#konfigurasi-environment)
+  - [Migrasi Database](#migrasi-database)
+  - [Menjalankan Proyek](#menjalankan-proyek)
+- [Fitur](#fitur)
+  - [AuthController](#authcontroller)
+  - [BookController](#bookcontroller)
+  - [BookLoanController](#bookloancontroller)
+  - [BookLoanHistoryController](#bookloanhistorycontroller)
+  - [Controller](#controller)
+  - [RatingsController](#ratingscontroller)
+  - [UserController](#usercontroller)
+  - [WishlistController](#wishlistcontroller)
+- [Penggunaan](#penggunaan)
+- [Berkontribusi](#berkontribusi)
+- [Lisensi](#lisensi)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Prasyarat
 
-## Learning Laravel
+Sebelum memulai, pastikan Anda telah memenuhi persyaratan berikut:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **PHP**: Versi 7.4 atau lebih baru. Unduh dari [php.net](https://www.php.net/).
+- **Composer**: Dependency manager untuk PHP. Unduh dari [getcomposer.org](https://getcomposer.org/).
+- **Database**: MySQL atau database lain yang didukung oleh Laravel.
+- **JWT Auth**: Digunakan untuk otentikasi JSON Web Token.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Instalasi
 
-## Laravel Sponsors
+Ikuti langkah-langkah berikut untuk menyiapkan proyek di mesin lokal Anda.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### Kloning Repositori
 
-### Premium Partners
+1. Buka terminal atau command prompt.
+2. Kloning repositori menggunakan perintah berikut:
+   ```bash
+   git clone https://github.com/itshusni29/Apiforionic.git
+   ```
+3. Masuk ke direktori proyek:
+   ```bash
+   cd Apiforionic
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### Instalasi Dependensi
 
-## Contributing
+1. Instal dependensi proyek dengan menjalankan:
+   ```bash
+   composer install
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Konfigurasi Environment
 
-## Code of Conduct
+1. Salin file `.env.example` menjadi `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+2. Buka file `.env` dan sesuaikan konfigurasi database Anda:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=nama_database
+   DB_USERNAME=user_database
+   DB_PASSWORD=password_database
+   ```
+3. Generate application key:
+   ```bash
+   php artisan key:generate
+   ```
+4. Generate JWT secret key:
+   ```bash
+   php artisan jwt:secret
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Migrasi Database
 
-## Security Vulnerabilities
+1. Jalankan migrasi database untuk membuat tabel yang diperlukan:
+   ```bash
+   php artisan migrate
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Menjalankan Proyek
 
-## License
+1. Untuk memulai server pengembangan lokal, jalankan:
+   ```bash
+   php artisan serve
+   ```
+2. Perintah ini akan memulai server di `http://localhost:8000`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Fitur
+
+### AuthController
+
+Mengelola otentikasi pengguna menggunakan JWT (JSON Web Token):
+- `register`: Mendaftarkan pengguna baru.
+- `login`: Masuk dengan kredensial pengguna dan menerima token JWT.
+- `logout`: Keluar dan menghapus token.
+- `refresh`: Memperbarui token yang telah kedaluwarsa.
+- `me`: Mendapatkan informasi pengguna yang terotentikasi.
+
+### BookController
+
+Mengelola data buku:
+- `index`: Melihat daftar semua buku.
+- `show`: Melihat detail buku berdasarkan ID.
+- `store`: Menambahkan buku baru.
+- `update`: Memperbarui informasi buku.
+- `destroy`: Menghapus buku.
+
+### BookLoanController
+
+Mengelola peminjaman buku:
+- `index`: Melihat daftar semua peminjaman.
+- `store`: Meminjam buku.
+- `update`: Memperbarui status peminjaman.
+- `destroy`: Mengembalikan buku yang dipinjam.
+
+### BookLoanHistoryController
+
+Menyimpan riwayat peminjaman buku:
+- `index`: Melihat riwayat peminjaman buku.
+- `show`: Melihat detail riwayat peminjaman berdasarkan ID.
+
+### Controller
+
+Base controller yang digunakan oleh controller lainnya. Ini menyediakan fungsionalitas umum yang dapat digunakan di semua controller.
+
+### RatingsController
+
+Mengelola rating buku:
+- `index`: Melihat daftar semua rating.
+- `store`: Menambahkan rating baru.
+- `update`: Memperbarui rating.
+- `destroy`: Menghapus rating.
+
+### UserController
+
+Mengelola data pengguna:
+- `index`: Melihat daftar semua pengguna.
+- `show`: Melihat detail pengguna berdasarkan ID.
+- `update`: Memperbarui informasi pengguna.
+- `destroy`: Menghapus pengguna.
+
+### WishlistController
+
+Mengelola wishlist buku pengguna:
+- `index`: Melihat daftar semua buku dalam wishlist.
+- `store`: Menambahkan buku ke wishlist.
+- `destroy`: Menghapus buku dari wishlist.
+
+## Penggunaan
+
+Setelah server berjalan, Anda dapat mengakses API endpoint melalui alat seperti Postman atau melalui aplikasi frontend yang terhubung. Setiap endpoint yang membutuhkan otentikasi harus menyertakan token JWT dalam header permintaan.
+
+## Berkontribusi
+
+Jika Anda ingin berkontribusi pada proyek ini, silakan ikuti langkah-langkah berikut:
+
+1. Fork repositori ini.
+2. Buat cabang baru:
+   ```bash
+   git checkout -b fitur/NamaFiturAnda
+   ```
+3. Lakukan perubahan Anda.
+4. Commit perubahan Anda:
+   ```bash
+   git commit -m 'Tambahkan beberapa fitur'
+   ```
+5. Push ke cabang:
+   ```bash
+   git push origin fitur/NamaFiturAnda
+   ```
+6. Buat pull request.
+
+## Lisensi
+
+Proyek ini dilisensikan di bawah Lisensi MIT. Lihat file [LICENSE](LICENSE) untuk detail lebih lanjut.
+
+---
+
+Jika Anda mengalami masalah atau memiliki pertanyaan, jangan ragu untuk membuka isu di GitHub. Selamat coding!
+
+Anda dapat menyimpan konten ini dalam file bernama `README.md` di direktori proyek Anda.
