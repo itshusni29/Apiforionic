@@ -18,5 +18,14 @@ class Book extends Model
     {
         return $this->hasMany(BookLoan::class);
     }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    public function calculateAverageRating()
+    {
+        return $this->ratings()->avg('rating');
+    }
 }
-?>

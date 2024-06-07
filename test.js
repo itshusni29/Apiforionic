@@ -1,7 +1,7 @@
 {
     "name": "John Doe",
     "email": "john.doe@example.com",
-    "password": "Password123!",
+    "password": "Password123!", 
     "alamat": "123 Main St",
     "nomor_telpon": "1234567890",
     "jenis_kelamin": "Laki-laki"

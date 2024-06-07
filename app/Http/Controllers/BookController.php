@@ -58,9 +58,6 @@ class BookController extends Controller
             if ($book->cover) {
                 // Generate full URL for the cover image
                 $book->cover = asset('storage/' . $book->cover);
-            } else {
-                // If cover image doesn't exist, set it to null or an empty string
-                $book->cover = null; // or ''
             }
             return response()->json($book);
         } else {
@@ -83,49 +80,51 @@ class BookController extends Controller
         ]);
 
         $book = Book::find($id);
-        if ($book) {
-            $book->judul = $request->judul;
-            $book->pengarang = $request->pengarang;
-            $book->penerbit = $request->penerbit;
-            $book->tahun_terbit = $request->tahun_terbit;
-            $book->kategori = $request->kategori;
-            $book->total_stock = $request->total_stock;
-            $book->stock_available = $request->total_stock - $book->loans()->where('status', 'Dipinjam')->count(); // Adjust stock available
-            $book->deskripsi = $request->deskripsi;
-            $book->ratings = $request->ratings;
-
-            if ($request->hasFile('cover')) {
-                $cover = $request->file('cover');
-                $fileName = time() . '.' . $cover->getClientOriginalExtension();
-                $cover->storeAs('public/covers', $fileName); // Store file in storage directory
-                // Hapus file cover lama jika ada
-                if ($book->cover) {
-                    Storage::delete('public/' . $book->cover);
-                }
-                $book->cover = 'covers/' . $fileName;
-            }
-
-            $book->save();
-
-            return response()->json(['message' => 'Book updated successfully'], 200);
-        } else {
+        if (!$book) {
             return response()->json(['message' => 'Book not found'], 404);
         }
+
+        $book->judul = $request->judul;
+        $book->pengarang = $request->pengarang;
+        $book->penerbit = $request->penerbit;
+        $book->tahun_terbit = $request->tahun_terbit;
+        $book->kategori = $request->kategori;
+        $book->total_stock = $request->total_stock;
+        $book->stock_available = $request->total_stock - $book->loans()->where('status', 'Dipinjam')->count(); // Adjust stock available
+        $book->deskripsi = $request->deskripsi;
+        $book->ratings = $request->ratings;
+
+        if ($request->hasFile('cover')) {
+            $cover = $request->file('cover');
+            $fileName = time() . '.' . $cover->getClientOriginalExtension();
+            $cover->storeAs('public/covers', $fileName); // Store file in storage directory
+            // Hapus file cover lama jika ada
+            if ($book->cover) {
+                Storage::delete('public/' . $book->cover);
+            }
+            $book->cover = 'covers/' . $fileName;
+        }
+
+        $book->save();
+
+        return response()->json(['message' => 'Book updated successfully'], 200);
     }
 
     public function destroy($id)
     {
         $book = Book::find($id);
-        if ($book) {
-            // Hapus file cover jika ada sebelum menghapus buku
-            if ($book->cover) {
-                Storage::delete('public/' . $book->cover);
-            }
-            $book->delete();
-            return response()->json(['message' => 'Book deleted successfully'], 200);
-        } else {
+        if (!$book) {
             return response()->json(['message' => 'Book not found'], 404);
         }
+
+        // Hapus file cover jika ada sebelum menghapus buku
+        if ($book->cover) {
+            Storage::delete('public/' . $book->cover);
+        }
+        $book->delete();
+        return response()->json(['message' => 'Book deleted successfully'], 200);
     }
+
+    
+    
 }
-?>

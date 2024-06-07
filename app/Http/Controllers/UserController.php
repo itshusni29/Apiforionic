@@ -21,7 +21,7 @@ class UserController extends Controller
             'password' => 'required',
             'alamat' => 'required',
             'nomor_telpon' => 'required',
-            'roles' => 'required',
+            'roles' => 'nullable',
             'jenis_kelamin' => 'required',
             'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -44,7 +44,7 @@ class UserController extends Controller
             'password' => 'required',
             'alamat' => 'required',
             'nomor_telpon' => 'required',
-            'roles' => 'required',
+            'roles' => 'nullable',
             'jenis_kelamin' => 'required',
             'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
