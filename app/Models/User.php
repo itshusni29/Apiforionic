@@ -46,6 +46,10 @@ class User extends Authenticatable implements JWTSubject // Implement JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function bookLoans()
+    {
+        return $this->hasMany(BookLoan::class);
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

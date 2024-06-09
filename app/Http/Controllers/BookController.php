@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +20,7 @@ class BookController extends Controller
             'pengarang' => 'required',
             'penerbit' => 'required',
             'tahun_terbit' => 'required|date',
-            'kategori' => 'required', 
+            'kategori' => 'required',
             'total_stock' => 'required|integer',
             'deskripsi' => 'required',
             'ratings' => 'nullable|numeric|min:0|max:10',
@@ -72,7 +72,7 @@ class BookController extends Controller
             'pengarang' => 'required',
             'penerbit' => 'required',
             'tahun_terbit' => 'required|date',
-            'kategori' => 'required', 
+            'kategori' => 'required',
             'total_stock' => 'required|integer',
             'deskripsi' => 'required',
             'ratings' => 'nullable|numeric|min:0|max:10',
@@ -125,6 +125,33 @@ class BookController extends Controller
         return response()->json(['message' => 'Book deleted successfully'], 200);
     }
 
+    public function search(Request $request)
+    {
+        $request->validate([
+            'query' => 'required|string',
+        ]);
     
+        $query = $request->input('query');
+        \Log::info("Search query: " . $query);
+    
+        $books = Book::where('judul', 'LIKE', "%$query%")
+            ->orWhere('pengarang', 'LIKE', "%$query%")
+            ->orWhere('penerbit', 'LIKE', "%$query%")
+            ->get();
+    
+        \Log::info("Books found: " . $books->count());
+    
+        if ($books->isEmpty()) {
+            return response()->json(['message' => 'Buku tidak ditemukan'], 404);
+        }
+    
+        foreach ($books as $book) {
+            if ($book->cover) {
+                $book->cover = asset('storage/' . $book->cover);
+            }
+        }
+    
+        return response()->json($books, 200);
+    }
     
 }
