@@ -163,14 +163,14 @@
                           <div class="best-product-item">
                               <div class="d-flex align-items-center gap-3">
                                   <div class="product-box border">
-                                      <img src="assets/images/products/01.png" alt="">
+                                      <img src="{{ asset('storage/' . $book->cover) }}" alt="">
                                   </div>
                                   <div class="product-info">
                                       <h6 class="product-name mb-1">{{ $book->judul }}</h6>
                                       <div class="product-rating mb-0">
                                           @php
-                                              $rating = $book->ratings ?? 0; // Mendapatkan rating buku, default 0 jika tidak ada rating
-                                              $filledStars = min(5, max(0, (int) $rating)); // Batasi jumlah bintang maksimal 5 dan minimal 0
+                                              $rating = $book->ratings ?? 0; 
+                                              $filledStars = min(5, max(0, (int) $rating));
                                           @endphp
                                           @for ($i = 0; $i < $filledStars; $i++)
                                               <i class="bi bi-star-fill text-warning"></i>
@@ -199,7 +199,7 @@
                  <div class="top-sellers-list p-2 mb-3">
                     @foreach($recentLoans as $loan)
                     <div class="d-flex align-items-center gap-3 sellers-list-item">
-                        <img src="{{ asset('path/to/avatar/' . $loan->user->avatar) }}" class="rounded-circle" width="50" height="50" alt="">
+                        <img src="{{ asset('storage/' . $loan->user->photo_profile) }}" class="rounded-circle" width="50" height="50" alt="">
                         <div>
                             <h6 class="mb-1">{{ $loan->book->judul }}</h6>
                             <p class="mb-0 font-13">{{ $loan->user->name }}</p>
@@ -212,9 +212,5 @@
                 </div>
                </div>
              </div>
-           </div><!--end row-->
-
-
-
-
+           </div>
 @endsection

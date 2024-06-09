@@ -23,7 +23,7 @@
                 <li class="nav-item dropdown dropdown-large">
                     <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
                         <div class="user-setting d-flex align-items-center gap-1">
-                            <img src="/" class="user-img" alt="">
+                            <img src="{{ asset('storage/' . Auth::user()->photo_profile) }}" alt="{{ Auth::user()->name }}" class="user-img" >
                             <div class="user-name d-none d-sm-block">{{ Auth::user()->name }}</div>
                         </div>
                     </a>
@@ -31,7 +31,7 @@
                         <li>
                             <a class="dropdown-item" href="#">
                                 <div class="d-flex align-items-center">
-                                    <img src="/" alt="" class="rounded-circle" width="60" height="60">
+                                    <img src="{{ asset('storage/' . Auth::user()->photo_profile) }}" alt="{{ Auth::user()->name }}" class="rounded-circle" width="60" height="60">
                                     <div class="ms-3">
                                         <h6 class="mb-0 dropdown-user-name">{{ Auth::user()->name }}</h6>
                                         <small class="mb-0 dropdown-user-designation text-secondary">{{ Auth::user()->roles }}</small>
@@ -39,6 +39,8 @@
                                 </div>
                             </a>
                         </li>
+
+
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="{{ route('users.show', ['user' => Auth::id()]) }}">

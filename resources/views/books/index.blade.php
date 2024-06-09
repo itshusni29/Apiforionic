@@ -45,7 +45,7 @@
                                             <td>{{ $book->deskripsi }}</td>
                                             <td>{{ $book->ratings }}</td>
                                             <td>
-                                                @if($book->cover)
+                                                @if($book->cover)   
                                                     <img src="{{ asset('storage/' . $book->cover) }}" class="rounded-circle" width="44" height="44" alt="">
                                                 @else
                                                     No cover available

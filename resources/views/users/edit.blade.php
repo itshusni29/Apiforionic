@@ -11,7 +11,7 @@
                         <div class="border p-3 rounded">
                             <h6 class="mb-0 text-uppercase">Update User</h6>
                             <hr/>
-                            <form method="POST" action="{{ route('users.update', $user->id) }}" class="row g-3">
+                            <form method="POST" action="{{ route('users.update', $user->id) }}" class="row g-3" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
                                 <div class="col-6">
@@ -43,9 +43,13 @@
                                     <input type="text" name="jenis_kelamin" value="{{ $user->jenis_kelamin }}" class="form-control">
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label">Photo Profile</label>
+                                    <label class="form-label">Photo Profile @if(!$user->photo_profile) <span class="text-danger">(required)</span> @endif</label>
                                     <input type="file" name="photo_profile" class="form-control">
+                                    @if(!$user->photo_profile)
+                                        <small class="text-muted">File should be in JPEG, PNG, JPG, or GIF format and should not exceed 2MB.</small>
+                                    @endif
                                 </div>
+
                                 <div class="col-12">
                                     <div class="d-grid">
                                         <button type="submit" class="btn btn-primary">Update</button>

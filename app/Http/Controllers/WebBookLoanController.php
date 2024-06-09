@@ -2,109 +2,112 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
+use Illuminate\Http\Request;
 use App\Models\BookLoan;
 use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
+use App\Models\Book;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
-class WebHomeController extends Controller
+class WebBookLoanController extends Controller
 {
-    public function index()
+
+
+    public function borrowForm()
     {
-        // Ambil total buku bulan ini
-        $currentMonth = Carbon::now()->month;
-        $currentYear = Carbon::now()->year;
-        $totalBooksCurrentMonth = Book::whereMonth('created_at', $currentMonth)
-            ->whereYear('created_at', $currentYear)
-            ->count();
+        $users = User::all();
+        $books = Book::all();
 
-        // Ambil total buku bulan lalu
-        $lastMonth = Carbon::now()->subMonth()->month;
-        $lastMonthYear = Carbon::now()->subMonth()->year;
-        $totalBooksLastMonth = Book::whereMonth('created_at', $lastMonth)
-            ->whereYear('created_at', $lastMonthYear)
-            ->count();
-
-        // Hitung total semua buku
-        $totalBooks = Book::count();
-
-        // Hitung persentase perubahan buku
-        if ($totalBooksLastMonth == 0) {
-            $percentageChangeBooks = $totalBooksCurrentMonth * 100; // Jika bulan lalu tidak ada buku, anggap 100% perubahan
-        } else {
-            $percentageChangeBooks = (($totalBooksCurrentMonth - $totalBooksLastMonth) / $totalBooksLastMonth) * 100;
-        }
-
-        // Ambil total user bulan ini
-        $totalUsersCurrentMonth = User::whereMonth('created_at', $currentMonth)
-            ->whereYear('created_at', $currentYear)
-            ->count();
-
-        // Ambil total user bulan lalu
-        $totalUsersLastMonth = User::whereMonth('created_at', $lastMonth)
-            ->whereYear('created_at', $lastMonthYear)
-            ->count();
-
-        // Hitung total semua user
-        $totalUsers = User::count();
-
-        // Hitung persentase perubahan user
-        if ($totalUsersLastMonth == 0) {
-            $percentageChangeUsers = $totalUsersCurrentMonth * 100; // Jika bulan lalu tidak ada user, anggap 100% perubahan
-        } else {
-            $percentageChangeUsers = (($totalUsersCurrentMonth - $totalUsersLastMonth) / $totalUsersLastMonth) * 100;
-        }
-
-        // Ambil total peminjaman buku bulan ini
-        $totalLoansCurrentMonth = BookLoan::whereMonth('created_at', $currentMonth)
-            ->whereYear('created_at', $currentYear)
-            ->count();
-
-        // Ambil total peminjaman buku bulan lalu
-        $totalLoansLastMonth = BookLoan::whereMonth('created_at', $lastMonth)
-            ->whereYear('created_at', $lastMonthYear)
-            ->count();
-
-        // Hitung total semua peminjaman buku
-        $totalLoans = BookLoan::count();
-
-        // Hitung persentase perubahan peminjaman
-        if ($totalLoansLastMonth == 0) {
-            $percentageChangeLoans = $totalLoansCurrentMonth * 100; // Jika bulan lalu tidak ada peminjaman, anggap 100% perubahan
-        } else {
-            $percentageChangeLoans = (($totalLoansCurrentMonth - $totalLoansLastMonth) / $totalLoansLastMonth) * 100;
-        }
-
-        // Ambil buku yang tersedia (belum dipinjam)
-        $availableBooks = Book::where('stock_available', '>', 0)->count();
-
-        // Ambil 8 peminjaman terbaru
-        $latestBookLoans = BookLoan::with('book', 'user')->orderBy('created_at', 'desc')->take(8)->get();
-
-        // Ambil 8 buku yang paling banyak dipinjam
-        $mostBorrowedBooks = Book::withCount('loans')
-            ->orderBy('loans_count', 'desc')
-            ->take(8)
-            ->get();
-
-        // Kirim data ke view
-        return view('home', compact(
-            'totalBooks',
-            'totalBooksCurrentMonth',
-            'totalBooksLastMonth',
-            'percentageChangeBooks',
-            'totalUsers',
-            'totalUsersCurrentMonth',
-            'totalUsersLastMonth',
-            'percentageChangeUsers',
-            'totalLoans',
-            'totalLoansCurrentMonth',
-            'totalLoansLastMonth',
-            'percentageChangeLoans',
-            'availableBooks',
-            'latestBookLoans',
-            'mostBorrowedBooks'
-        ));
+        return view('borrow_books.form', compact('users', 'books'));
     }
+
+    public function borrow(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+            'book_id' => 'required|exists:books,id',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $user = User::findOrFail($request->user_id);
+        $book = Book::findOrFail($request->book_id);
+
+        // Check if user already borrowed this book
+        if (BookLoan::where('user_id', $user->id)->where('book_id', $request->book_id)->where('status', 'Dipinjam')->exists()) {
+            return redirect()->back()->with('error', 'You have already borrowed this book');
+        }
+
+        // Check if the book is available
+        if ($book->stock_available <= 0) {
+            return redirect()->back()->with('error', 'This book is currently not available');
+        }
+
+        // Create the loan
+        $bookLoan = new BookLoan();
+        $bookLoan->user_id = $user->id;
+        $bookLoan->book_id = $request->book_id;
+        $bookLoan->tanggal_peminjaman = now();
+        $bookLoan->status = 'Dipinjam';
+        $bookLoan->save();
+
+        // Decrease the available stock
+        $book->stock_available--;
+        $book->save();
+
+        return redirect()->back()->with('success', 'Book borrowed successfully');
+    }
+
+    public function returnBook(Request $request, $loanId)
+    {
+        $bookLoan = BookLoan::findOrFail($loanId);
+
+        // Check if the loan belongs to the user
+        if ($bookLoan->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Unauthorized');
+        }
+
+        // Mark the book as returned
+        $bookLoan->status = 'Dikembalikan';
+        $bookLoan->tanggal_pengembalian_aktual = now();
+        $bookLoan->save();
+
+        // Increase the available stock
+        $book = Book::findOrFail($bookLoan->book_id);
+        $book->stock_available++;
+        $book->save();
+
+        return redirect()->back()->with('success', 'Book returned successfully');
+    }
+
+    
+    public function borrowedBooksByUser($userId)
+    {
+        // Mengambil semua buku yang dipinjam oleh user tertentu
+        $user = User::findOrFail($userId);
+        $borrowedBooks = BookLoan::where('user_id', $userId)
+                                ->where('status', 'Dipinjam')
+                                ->with('book')
+                                ->get();
+
+        return view('borrow_books.borrowed_books_by_user', compact('user', 'borrowedBooks'));
+    }
+
+
+    public function borrowedBooksByAllUsers()
+    {
+        // Mengambil semua user yang sedang meminjam buku
+        $usersWithLoans = User::whereHas('bookLoans', function ($query) {
+            $query->where('status', 'Dipinjam');
+        })->get();
+        
+        return view('borrow_books.active_loans', compact('usersWithLoans'));
+    }
+
+
+
+    
 }
