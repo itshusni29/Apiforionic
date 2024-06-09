@@ -31,8 +31,14 @@
                                 </div>
                                 <div class="col-6">
                                     <label class="form-label">Kategori</label>
-                                    <input type="text" name="kategori" class="form-control">
+                                    <select name="kategori" class="form-control select2" style="width: 100%;">
+                                        <option value="">Pilih Kategori</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category }}">{{ $category }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
+
                                 <div class="col-6">
                                     <label class="form-label">Total Stock</label>
                                     <input type="number" name="total_stock" class="form-control">

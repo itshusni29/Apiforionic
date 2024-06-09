@@ -16,7 +16,35 @@ class WebBookController extends Controller
 
     public function create()
     {
-        return view('books.create');
+        $categories = [
+            'Fiksi',
+            'Non-fiksi',
+            'Novel',
+            'Cerpen',
+            'Drama',
+            'Puisi',
+            'Biografi',
+            'Sejarah',
+            'Ilmiah',
+            'Teknologi',
+            'Bisnis',
+            'Kesehatan',
+            'Seni',
+            'Musik',
+            'Pendidikan',
+            'Agama',
+            'Filosofi',
+            'Politik',
+            'Psikologi',
+            'Hukum',
+            'Perjalanan',
+            'Kuliner',
+            'Olahraga',
+            'Alam',
+            'Petualangan',
+        ];
+
+        return view('books.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -40,15 +68,15 @@ class WebBookController extends Controller
         $book->tahun_terbit = $request->tahun_terbit;
         $book->kategori = $request->kategori;
         $book->total_stock = $request->total_stock;
-        $book->stock_available = $request->total_stock; // Set initial available stock to total stock
+        $book->stock_available = $request->total_stock; 
         $book->deskripsi = $request->deskripsi;
         $book->ratings = $request->ratings;
 
         if ($request->hasFile('cover')) {
             $cover = $request->file('cover');
             $fileName = time() . '.' . $cover->getClientOriginalExtension();
-            $cover->storeAs('public/covers', $fileName); // Store file in storage directory
-            $book->cover = 'covers/' . $fileName; // Store relative path to the image
+            $cover->storeAs('public/covers', $fileName); 
+            $book->cover = 'covers/' . $fileName; 
         }
 
         $book->save();
