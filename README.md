@@ -1,4 +1,3 @@
-Berikut adalah README yang diperbarui dengan penjelasan tambahan mengenai penggunaan JWT Auth dan fitur dari masing-masing controller:
 
 # Apiforionic
 
