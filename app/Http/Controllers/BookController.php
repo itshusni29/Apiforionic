@@ -1,4 +1,6 @@
 <?php
+
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
@@ -127,31 +129,35 @@ class BookController extends Controller
 
     public function search(Request $request)
     {
-        $request->validate([
-            'query' => 'required|string',
-        ]);
-    
         $query = $request->input('query');
-        \Log::info("Search query: " . $query);
-    
-        $books = Book::where('judul', 'LIKE', "%$query%")
-            ->orWhere('pengarang', 'LIKE', "%$query%")
-            ->orWhere('penerbit', 'LIKE', "%$query%")
-            ->get();
-    
-        \Log::info("Books found: " . $books->count());
-    
-        if ($books->isEmpty()) {
-            return response()->json(['message' => 'Buku tidak ditemukan'], 404);
+        
+        if (!$query) {
+            return response()->json(['message' => 'Query parameter is required'], 400);
         }
     
+        // Log the query for debugging
+        Log::info('Searching for books with query: ' . $query);
+    
+        $books = Book::where('judul', 'like', '%' . $query . '%')
+            ->orWhere('pengarang', 'like', '%' . $query . '%')
+            ->get();
+    
+        // Log the result count
+        Log::info('Books found: ' . $books->count());
+    
+        // Include full URL for cover images if they exist
         foreach ($books as $book) {
             if ($book->cover) {
                 $book->cover = asset('storage/' . $book->cover);
             }
         }
-    
-        return response()->json($books, 200);
+        
+        if ($books->isEmpty()) {
+            Log::info('No books found for query: ' . $query);
+        } else {
+            Log::info('Books found: ' . $books->count());
+        }
+        
+        return response()->json($books);
     }
-    
 }

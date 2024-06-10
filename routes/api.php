@@ -1,4 +1,6 @@
 <?php
+
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookLoanController;
@@ -16,10 +18,16 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('jwt.auth')
 
 // Protected routes
 Route::middleware(['jwt.auth'])->group(function () {
-    
-    // User resource routes
+
+    // Admin-only routes
     Route::middleware(['admin'])->group(function () {
+        // User resource routes
         Route::apiResource('users', UserController::class);
+
+        // Admin routes for managing books
+        Route::post('/books', [BookController::class, 'store']);
+        Route::put('/books/{book}', [BookController::class, 'update']);
+        Route::delete('/books/{book}', [BookController::class, 'destroy']);
     });
 
     // Get authenticated user
@@ -29,15 +37,8 @@ Route::middleware(['jwt.auth'])->group(function () {
 
     // Viewing and searching books
     Route::get('/books', [BookController::class, 'index']);
-    Route::get('/books/{book}', [BookController::class, 'show']);
     Route::get('/books/search', [BookController::class, 'search']);
-
-    // Admin routes for managing books
-    Route::middleware(['admin'])->group(function () {
-        Route::post('/books', [BookController::class, 'store']);
-        Route::put('/books/{book}', [BookController::class, 'update']);
-        Route::delete('/books/{book}', [BookController::class, 'destroy']);
-    });
+    Route::get('/books/{book}', [BookController::class, 'show']);
 
     // Book loan routes
     Route::post('/borrow/{bookId}', [BookLoanController::class, 'borrow']);
