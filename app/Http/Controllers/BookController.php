@@ -134,16 +134,14 @@ class BookController extends Controller
         if (!$query) {
             return response()->json(['message' => 'Query parameter is required'], 400);
         }
-    
-        // Log the query for debugging
-        Log::info('Searching for books with query: ' . $query);
+
     
         $books = Book::where('judul', 'like', '%' . $query . '%')
             ->orWhere('pengarang', 'like', '%' . $query . '%')
+            ->orWhere('penerbit', 'like', '%' . $query . '%')
             ->get();
     
-        // Log the result count
-        Log::info('Books found: ' . $books->count());
+
     
         // Include full URL for cover images if they exist
         foreach ($books as $book) {
