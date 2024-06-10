@@ -4,6 +4,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookLoanController;
+use App\Http\Controllers\BookRecommendationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\BookLoanHistoryController;
@@ -52,4 +53,8 @@ Route::middleware(['jwt.auth'])->group(function () {
 
     // Ratings routes
     Route::apiResource('ratings', RatingsController::class);
+
+    // Book recommendation route
+    Route::get('/recommendations/{userId}', [BookRecommendationController::class, 'recommend']);
+
 });
