@@ -9,7 +9,11 @@
                 <div class="card shadow-sm border-0 overflow-hidden">
                     <div class="card-body">
                         <div class="profile-avatar text-center">
-                            <img src="{{ asset('storage/' . $book->cover) }}" class="rounded-circle shadow" width="120" height="120" alt="">
+                            @if($book->cover)
+                                <img src="{{ asset('storage/' . $book->cover) }}" class="rounded-circle shadow" width="120" height="120" alt="{{ $book->judul }}">
+                            @else
+                                <p>No cover available</p>
+                            @endif
                         </div>
                         <div class="text-center mt-4">
                             <h4 class="mb-1">{{ $book->judul }}</h4>

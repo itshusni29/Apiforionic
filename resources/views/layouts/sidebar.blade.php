@@ -45,7 +45,8 @@
                 <div class="menu-title">Loans</div>
             </a>
             <ul>
-                <li><a href="{{ route('borrowed.books.all') }}"><i class="bi bi-arrow-right-short"></i>List</a></li>
+                <li><a href="{{ route('borrowed.books.all') }}"><i class="bi bi-arrow-right-short"></i>List by User</a></li>
+                <li><a href="{{ route('borrowed.books.by.book') }}"><i class="bi bi-arrow-right-short"></i>List by Book</a></li>
                 <li><a href="{{ route('borrow.form') }}"><i class="bi bi-arrow-right-short"></i>Add</a></li>
             </ul>
         </li>

@@ -9,31 +9,69 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Borrow Book</h5>
+                        @if (session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+                        @if (session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+                        <form method="GET" action="{{ route('borrow.form') }}">
+                            <div class="mb-3">
+                                <label for="search" class="form-label">Search Book</label>
+                                <input class="form-control" type="text" id="search" name="search" placeholder="Type here to search">
+                            </div>
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Filter by Category</label>
+                                <select name="category" id="category" class="form-select">
+                                    <option value="">All Categories</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category }}" {{ request()->get('category') == $category ? 'selected' : '' }}>{{ $category }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                        </form>
+
                         <form method="POST" action="{{ route('borrow.book') }}">
                             @csrf
-                            <div class="mb-3">
+                            <div class="mb-3 mt-4">
                                 <label for="user_id" class="form-label">User</label>
-                                <select name="user_id" class="form-select">
+                                <select name="user_id" class="form-select" id="user_id">
                                     @foreach ($users as $user)
                                         <option value="{{ $user->id }}">{{ $user->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label for="book_id" class="form-label">Book</label>
-                                <select name="book_id" class="form-select">
-                                    @foreach ($books as $book)
-                                        <option value="{{ $book->id }}">
-                                            {{ $book->judul }}
-                                            <div class="mb-3">
-                                                <label for="cover">Book Cover</label><br>
-                                                <img src="{{ asset('storage/' . $book->cover_image) }}" alt="Book Cover" width="100">
+
+                            <div class="card bg-transparent shadow-none mt-4">
+                                <div class="card-body">
+                                    <h6 class="mb-0 text-uppercase">Select a Book</h6>
+                                    <div class="my-3 border-top"></div>
+                                    <div class="card-group">
+                                        @foreach ($books as $book)
+                                            <div class="card border-end">
+                                                <img src="{{ asset('storage/' . $book->cover) }}" class="card-img-top" alt="{{ $book->judul }}">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{ $book->judul }}</h5>
+                                                    <p class="card-text">{{ $book->deskripsi }}</p>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="selected_books[]" value="{{ $book->id }}" id="{{ $book->id }}">
+                                                        <label class="form-check-label" for="{{ $book->id }}">Select</label>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </option>
-                                    @endforeach
-                                </select>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Borrow</button>
+
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-primary">Borrow</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -41,7 +79,3 @@
         </div>
     </div>
 @endsection
-
-
-
-

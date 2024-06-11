@@ -54,18 +54,9 @@ Route::delete('/books/{id}', [WebBookController::class, 'destroy'])->name('books
 
 
 
-// Route untuk menampilkan formulir peminjaman
-Route::get('/borrow-form', [WebBookLoanController::class, 'borrowForm'])->name('borrow.form');
-
-// Route untuk melakukan peminjaman buku
+Route::get('/borrow', [WebBookLoanController::class, 'borrowForm'])->name('borrow.form');
 Route::post('/borrow', [WebBookLoanController::class, 'borrow'])->name('borrow.book');
-
-// Route untuk mengembalikan buku
 Route::post('/return/{loanId}', [WebBookLoanController::class, 'returnBook'])->name('return.book');
-
-// Route untuk menampilkan buku yang dipinjam oleh user tertentu
 Route::get('/borrowed-books/user/{userId}', [WebBookLoanController::class, 'borrowedBooksByUser'])->name('borrowed.books.user');
-
-// Route untuk menampilkan semua buku yang dipinjam oleh semua user
 Route::get('/borrowed-books', [WebBookLoanController::class, 'borrowedBooksByAllUsers'])->name('borrowed.books.all');
-
+Route::get('/borrowed-books/by-book', [WebBookLoanController::class, 'borrowedBooksByBook'])->name('borrowed.books.by.book');

@@ -17,31 +17,7 @@ class WebBookController extends Controller
     public function create()
     {
         $categories = [
-            'Fiksi',
-            'Non-fiksi',
-            'Novel',
-            'Cerpen',
-            'Drama',
-            'Puisi',
-            'Biografi',
-            'Sejarah',
-            'Ilmiah',
-            'Teknologi',
-            'Bisnis',
-            'Kesehatan',
-            'Seni',
-            'Musik',
-            'Pendidikan',
-            'Agama',
-            'Filosofi',
-            'Politik',
-            'Psikologi',
-            'Hukum',
-            'Perjalanan',
-            'Kuliner',
-            'Olahraga',
-            'Alam',
-            'Petualangan',
+            'Fiksi', 'Non-fiksi', 'Novel', 'Cerpen', 'Drama', 'Puisi', 'Biografi', 'Sejarah', 'Ilmiah', 'Teknologi', 'Bisnis', 'Kesehatan', 'Seni', 'Musik', 'Pendidikan', 'Agama', 'Filosofi', 'Politik', 'Psikologi', 'Hukum', 'Perjalanan', 'Kuliner', 'Olahraga', 'Alam', 'Petualangan',
         ];
 
         return view('books.create', compact('categories'));
@@ -61,43 +37,44 @@ class WebBookController extends Controller
             'cover' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
         ]);
 
-        $book = new Book();
-        $book->judul = $request->judul;
-        $book->pengarang = $request->pengarang;
-        $book->penerbit = $request->penerbit;
-        $book->tahun_terbit = $request->tahun_terbit;
-        $book->kategori = $request->kategori;
-        $book->total_stock = $request->total_stock;
-        $book->stock_available = $request->total_stock; 
-        $book->deskripsi = $request->deskripsi;
-        $book->ratings = $request->ratings;
+        try {
+            $book = new Book();
+            $book->judul = $request->judul;
+            $book->pengarang = $request->pengarang;
+            $book->penerbit = $request->penerbit;
+            $book->tahun_terbit = $request->tahun_terbit;
+            $book->kategori = $request->kategori;
+            $book->total_stock = $request->total_stock;
+            $book->stock_available = $request->total_stock; 
+            $book->deskripsi = $request->deskripsi;
+            $book->ratings = $request->ratings;
 
-        if ($request->hasFile('cover')) {
-            $cover = $request->file('cover');
-            $fileName = time() . '.' . $cover->getClientOriginalExtension();
-            $cover->storeAs('public/covers', $fileName); 
-            $book->cover = 'covers/' . $fileName; 
+            if ($request->hasFile('cover')) {
+                $cover = $request->file('cover');
+                $fileName = time() . '.' . $cover->getClientOriginalExtension();
+                $cover->storeAs('public/covers', $fileName); 
+                $book->cover = 'covers/' . $fileName; 
+            }
+
+            $book->save();
+
+            return redirect()->route('books.index')->with('success', 'Book created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'There was an error saving the book: ' . $e->getMessage()]);
         }
-
-        $book->save();
-
-        return redirect()->route('books.index')->with('success', 'Book created successfully.');
     }
 
     public function show($id)
     {
         $book = Book::find($id);
         if ($book) {
-            // Check if cover image exists
-            if ($book->cover) {
-                // Generate full URL for the cover image
-                $book->cover = asset('storage/' . $book->cover);
-            }
             return view('books.show', compact('book'));
         } else {
             return redirect()->route('books.index')->with('error', 'Book not found.');
         }
     }
+    
+    
 
     public function edit($id)
     {

@@ -8,66 +8,83 @@ use App\Models\User;
 use App\Models\Book;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class WebBookLoanController extends Controller
 {
-
-
-    public function borrowForm()
+    public function borrowForm(Request $request)
     {
         $users = User::all();
-        $books = Book::all();
+        $categories = [
+            'Fiksi', 'Non-fiksi', 'Novel', 'Cerpen', 'Drama', 'Puisi', 'Biografi', 'Sejarah', 'Ilmiah', 'Teknologi', 
+            'Bisnis', 'Kesehatan', 'Seni', 'Musik', 'Pendidikan', 'Agama', 'Filosofi', 'Politik', 'Psikologi', 
+            'Hukum', 'Perjalanan', 'Kuliner', 'Olahraga', 'Alam', 'Petualangan'
+        ];
 
-        return view('borrow_books.form', compact('users', 'books'));
+        $query = Book::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('judul', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->has('category') && $request->category != '') {
+            $query->where('kategori', $request->category);
+        }
+
+        $books = $query->get();
+
+        return view('borrow_books.form', compact('users', 'categories', 'books'));
     }
 
     public function borrow(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
-            'book_id' => 'required|exists:books,id',
+            'selected_books' => 'required|array|min:1', // Ubah 'book_id' menjadi 'selected_books' sesuai dengan form
+            'selected_books.*' => 'exists:books,id', // Validasi setiap buku yang dipilih
         ]);
-
+    
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-
+    
         $user = User::findOrFail($request->user_id);
-        $book = Book::findOrFail($request->book_id);
-
-        // Check if user already borrowed this book
-        if (BookLoan::where('user_id', $user->id)->where('book_id', $request->book_id)->where('status', 'Dipinjam')->exists()) {
-            return redirect()->back()->with('error', 'You have already borrowed this book');
+        $selectedBooks = $request->selected_books; // Ambil semua buku yang dipilih dari form
+    
+        foreach ($selectedBooks as $bookId) {
+            // Periksa jika buku sudah dipinjam
+            if (BookLoan::where('user_id', $user->id)->where('book_id', $bookId)->where('status', 'Dipinjam')->exists()) {
+                return redirect()->back()->with('error', 'You have already borrowed one or more of the selected books.');
+            }
+    
+            // Cek ketersediaan buku
+            $book = Book::findOrFail($bookId);
+            if ($book->stock_available <= 0) {
+                return redirect()->back()->with('error', 'One or more of the selected books are currently not available.');
+            }
+    
+            // Membuat data peminjaman
+            $bookLoan = new BookLoan();
+            $bookLoan->user_id = $user->id;
+            $bookLoan->book_id = $bookId;
+            $bookLoan->tanggal_peminjaman = now();
+            $bookLoan->status = 'Dipinjam';
+            $bookLoan->save();
+    
+            // Kurangi stok yang tersedia
+            $book->stock_available--;
+            $book->save();
         }
-
-        // Check if the book is available
-        if ($book->stock_available <= 0) {
-            return redirect()->back()->with('error', 'This book is currently not available');
-        }
-
-        // Create the loan
-        $bookLoan = new BookLoan();
-        $bookLoan->user_id = $user->id;
-        $bookLoan->book_id = $request->book_id;
-        $bookLoan->tanggal_peminjaman = now();
-        $bookLoan->status = 'Dipinjam';
-        $bookLoan->save();
-
-        // Decrease the available stock
-        $book->stock_available--;
-        $book->save();
-
-        return redirect()->back()->with('success', 'Book borrowed successfully');
+    
+        return redirect()->back()->with('success', 'Books borrowed successfully.');
     }
-
+    
     public function returnBook(Request $request, $loanId)
     {
         $bookLoan = BookLoan::findOrFail($loanId);
 
         // Check if the loan belongs to the user
         if ($bookLoan->user_id !== Auth::id()) {
-            return redirect()->back()->with('error', 'Unauthorized');
+            return redirect()->back()->with('error', 'Unauthorized.');
         }
 
         // Mark the book as returned
@@ -80,10 +97,9 @@ class WebBookLoanController extends Controller
         $book->stock_available++;
         $book->save();
 
-        return redirect()->back()->with('success', 'Book returned successfully');
+        return redirect()->back()->with('success', 'Book returned successfully.');
     }
 
-    
     public function borrowedBooksByUser($userId)
     {
         // Mengambil semua buku yang dipinjam oleh user tertentu
@@ -96,18 +112,24 @@ class WebBookLoanController extends Controller
         return view('borrow_books.borrowed_books_by_user', compact('user', 'borrowedBooks'));
     }
 
-
     public function borrowedBooksByAllUsers()
     {
         // Mengambil semua user yang sedang meminjam buku
         $usersWithLoans = User::whereHas('bookLoans', function ($query) {
             $query->where('status', 'Dipinjam');
         })->get();
-        
+
         return view('borrow_books.active_loans', compact('usersWithLoans'));
     }
 
-
-
+    public function borrowedBooksByBook()
+    {
+        
+        $borrowedBooks = BookLoan::where('status', 'Dipinjam')
+                                ->with('book', 'user') // Mengambil relasi buku dan user
+                                ->get();
+    
+        return view('borrow_books.borrowed_books_by_book', compact('borrowedBooks'));
+    }
     
 }
