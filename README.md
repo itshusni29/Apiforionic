@@ -1,39 +1,6 @@
+Untuk memperbarui README.md agar mencakup informasi tentang penggunaan seeder yang telah ditambahkan, berikut adalah tambahannya:
 
-# Apiforionic
-
-Selamat datang di proyek Apiforionic! README ini akan memandu Anda melalui proses kloning dan instalasi proyek di mesin lokal Anda serta memberikan gambaran tentang beberapa fitur yang ada.
-
-## Daftar Isi
-
-- [Prasyarat](#prasyarat)
-- [Instalasi](#instalasi)
-  - [Kloning Repositori](#kloning-repositori)
-  - [Instalasi Dependensi](#instalasi-dependensi)
-  - [Konfigurasi Environment](#konfigurasi-environment)
-  - [Migrasi Database](#migrasi-database)
-  - [Menjalankan Proyek](#menjalankan-proyek)
-- [Fitur](#fitur)
-  - [AuthController](#authcontroller)
-  - [BookController](#bookcontroller)
-  - [BookLoanController](#bookloancontroller)
-  - [BookLoanHistoryController](#bookloanhistorycontroller)
-  - [Controller](#controller)
-  - [RatingsController](#ratingscontroller)
-  - [UserController](#usercontroller)
-  - [WishlistController](#wishlistcontroller)
-- [Penggunaan](#penggunaan)
-- [Berkontribusi](#berkontribusi)
-- [Lisensi](#lisensi)
-
-## Prasyarat
-
-Sebelum memulai, pastikan Anda telah memenuhi persyaratan berikut:
-
-- **PHP**: Versi 7.4 atau lebih baru. Unduh dari [php.net](https://www.php.net/).
-- **Composer**: Dependency manager untuk PHP. Unduh dari [getcomposer.org](https://getcomposer.org/).
-- **Database**: MySQL atau database lain yang didukung oleh Laravel.
-- **JWT Auth**: Digunakan untuk otentikasi JSON Web Token.
-
+```markdown
 ## Instalasi
 
 Ikuti langkah-langkah berikut untuk menyiapkan proyek di mesin lokal Anda.
@@ -95,6 +62,13 @@ Ikuti langkah-langkah berikut untuk menyiapkan proyek di mesin lokal Anda.
    php artisan serve
    ```
 2. Perintah ini akan memulai server di `http://localhost:8000`.
+
+### Menambahkan Data Seeder
+
+1. Jalankan seeder untuk memasukkan data dummy pengguna:
+   ```bash
+   php artisan db:seed --class=UsersTableSeeder
+   ```
 
 ## Fitur
 
@@ -190,3 +164,6 @@ Proyek ini dilisensikan di bawah Lisensi MIT. Lihat file [LICENSE](LICENSE) untu
 Jika Anda mengalami masalah atau memiliki pertanyaan, jangan ragu untuk membuka isu di GitHub. Selamat coding!
 
 Anda dapat menyimpan konten ini dalam file bernama `README.md` di direktori proyek Anda.
+```
+
+Dengan menambahkan bagian ini, README.md sekarang mencakup langkah-langkah untuk menjalankan seeder dan juga memberikan gambaran umum tentang proyek Apiforionic beserta fitur-fiturnya. Anda dapat menyimpan konten ini dalam file README.md di direktori proyek Anda untuk memberikan panduan yang jelas kepada pengembang yang lain.
