@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookLoanController;
@@ -20,10 +19,18 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('jwt.auth')
 // Protected routes
 Route::middleware(['jwt.auth'])->group(function () {
 
+    // Get authenticated user
+    Route::get('/user', function () {
+        return auth()->user();
+    });
+
+    // User resource routes (for admin and user's own profile)
+    Route::apiResource('users', UserController::class)->except(['store', 'update', 'destroy']);
+    Route::put('/users/{user}', [UserController::class, 'update'])->middleware('can:update,user');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->middleware('admin');
+
     // Admin-only routes
     Route::middleware(['admin'])->group(function () {
-        // User resource routes
-        Route::apiResource('users', UserController::class);
 
         // Admin routes for managing books
         Route::post('/books', [BookController::class, 'store']);
@@ -31,12 +38,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::delete('/books/{book}', [BookController::class, 'destroy']);
     });
 
-    // Get authenticated user
-    Route::get('/user', function () {
-        return auth()->user();
-    });
-
-    // Viewing and searching books
+    // Viewing and searching books (accessible to authenticated users)
     Route::get('/books', [BookController::class, 'index']);
     Route::get('/books/search', [BookController::class, 'search']);
     Route::get('/books/{book}', [BookController::class, 'show']);
@@ -58,3 +60,4 @@ Route::middleware(['jwt.auth'])->group(function () {
     Route::get('/recommendations/{userId}', [BookRecommendationController::class, 'recommend']);
 
 });
+

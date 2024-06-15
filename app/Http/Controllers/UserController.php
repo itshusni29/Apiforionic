@@ -22,9 +22,16 @@ class UserController extends Controller
             'alamat' => 'required',
             'nomor_telpon' => 'required',
             'roles' => 'nullable',
-            'jenis_kelamin' => 'required',
+            'jenis_kelamin' => 'required|in:L,P', // Jenis kelamin hanya bisa 'L' atau 'P'
             'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        // Handle file upload for photo_profile if exists
+        if ($request->hasFile('photo_profile')) {
+            $photoPath = $request->file('photo_profile')->store('public/photo_profiles');
+            $photoUrl = url('/storage/' . str_replace('public/', '', $photoPath));
+            $request->merge(['photo_profile' => $photoUrl]);
+        }
 
         $user = User::create($request->all());
 
@@ -38,20 +45,34 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'alamat' => 'required',
-            'nomor_telpon' => 'required',
-            'roles' => 'nullable',
-            'jenis_kelamin' => 'required',
-            'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        // Mengambil user yang sedang login
+        $loggedInUser = auth()->user();
 
-        $user->update($request->all());
+        // Memeriksa apakah yang mengedit adalah admin atau user yang sesuai
+        if ($loggedInUser->isAdmin() || $loggedInUser->id === $user->id) {
+            $request->validate([
+                'name' => 'required',
+                'email' => 'required|email',
+                'alamat' => 'required',
+                'nomor_telpon' => 'required',
+                'roles' => 'nullable',
+                'jenis_kelamin' => 'required|in:L,P',
+                'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
 
-        return response()->json(['user' => $user], 200);
+            // Handle file upload for photo_profile if exists
+            if ($request->hasFile('photo_profile')) {
+                $photoPath = $request->file('photo_profile')->store('public/photo_profiles');
+                $photoUrl = url('/storage/' . str_replace('public/', '', $photoPath));
+                $request->merge(['photo_profile' => $photoUrl]);
+            }
+
+            $user->update($request->all());
+
+            return response()->json(['user' => $user], 200);
+        } else {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
     }
 
     public function destroy(User $user)
