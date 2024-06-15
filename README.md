@@ -55,6 +55,13 @@ Ikuti langkah-langkah berikut untuk menyiapkan proyek di mesin lokal Anda.
    php artisan migrate
    ```
 
+### Menambahkan Data Seeder
+
+1. Jalankan seeder untuk memasukkan data dummy pengguna:
+   ```bash
+   php artisan db:seed --class=UsersTableSeeder
+   ```
+
 ### Menjalankan Proyek
 
 1. Untuk memulai server pengembangan lokal, jalankan:
@@ -62,13 +69,6 @@ Ikuti langkah-langkah berikut untuk menyiapkan proyek di mesin lokal Anda.
    php artisan serve
    ```
 2. Perintah ini akan memulai server di `http://localhost:8000`.
-
-### Menambahkan Data Seeder
-
-1. Jalankan seeder untuk memasukkan data dummy pengguna:
-   ```bash
-   php artisan db:seed --class=UsersTableSeeder
-   ```
 
 ## Fitur
 
