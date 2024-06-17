@@ -81,24 +81,31 @@ class WebBookLoanController extends Controller
     public function returnBook(Request $request, $loanId)
     {
         $bookLoan = BookLoan::findOrFail($loanId);
-
-        // Check if the loan belongs to the user
-        if ($bookLoan->user_id !== Auth::id()) {
-            return redirect()->back()->with('error', 'Unauthorized.');
+    
+        // Check if the loan belongs to the user and status is 'Dipinjam'
+        if ($bookLoan->user_id !== Auth::id() || $bookLoan->status !== 'Dipinjam') {
+            return redirect()->back()->with('error', 'Unauthorized or book already returned.');
         }
-
-        // Mark the book as returned
-        $bookLoan->status = 'Dikembalikan';
-        $bookLoan->tanggal_pengembalian_aktual = now();
-        $bookLoan->save();
-
-        // Increase the available stock
-        $book = Book::findOrFail($bookLoan->book_id);
-        $book->stock_available++;
-        $book->save();
-
-        return redirect()->back()->with('success', 'Book returned successfully.');
+    
+        // Mark the book as returned only if status is 'Dipinjam'
+        if ($bookLoan->status === 'Dipinjam') {
+            // Mark the book as returned
+            $bookLoan->status = 'Dikembalikan';
+            $bookLoan->tanggal_pengembalian_aktual = now();
+            $bookLoan->save();
+    
+            // Increase the available stock
+            $book = Book::findOrFail($bookLoan->book_id);
+            $book->stock_available++;
+            $book->save();
+    
+            return redirect()->back()->with('success', 'Book returned successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Book already returned.');
+        }
     }
+    
+    
 
     public function borrowedBooksByUser($userId)
     {

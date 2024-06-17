@@ -28,7 +28,7 @@ class CreateBookLoansTable extends Migration
             $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
 
             // Add unique constraint to ensure one book per user at a time
-            $table->unique(['user_id', 'book_id', 'status']);
+            $table->unique(['user_id', 'book_id', 'status', 'tanggal_pengembalian_aktual']);
         });
     }
 

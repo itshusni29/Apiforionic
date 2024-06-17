@@ -46,6 +46,7 @@ Route::middleware(['jwt.auth'])->group(function () {
     // Book loan routes
     Route::post('/borrow/{bookId}', [BookLoanController::class, 'borrow']);
     Route::post('/return/{loanId}', [BookLoanController::class, 'returnBook']);
+    Route::get('/borrowed-books', [BookLoanController::class, 'borrowedBooksByUser']); // Added route for borrowed books by user
 
     // Wishlist routes
     Route::apiResource('wishlists', WishlistController::class)->only(['index', 'store', 'destroy']);
@@ -60,4 +61,3 @@ Route::middleware(['jwt.auth'])->group(function () {
     Route::get('/recommendations/{userId}', [BookRecommendationController::class, 'recommend']);
 
 });
-
