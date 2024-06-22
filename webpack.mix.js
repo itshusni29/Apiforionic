@@ -12,6 +12,8 @@ const mix = require('laravel-mix');
  */
 
 mix.js('resources/js/app.js', 'public/js')
-    .postCss('resources/css/app.css', 'public/css', [
-        //
-    ]);
+   .postCss('resources/css/app.css', 'public/css', [
+       //
+   ])
+   .copy('node_modules/tinymce/skins', 'public/js/tinymce/skins')
+   .copy('node_modules/tinymce/plugins', 'public/js/tinymce/plugins');

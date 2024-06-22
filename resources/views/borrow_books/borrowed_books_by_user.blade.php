@@ -13,12 +13,12 @@
                             <table class="table align-middle">
                                 <thead class="table-secondary">
                                     <tr>
-                                        <th>#</th>
-                                        <th>Title</th>
-                                        <th>Author</th>
-                                        <th>Category</th>
-                                        <th>Cover</th>
-                                        <th>Borrowed Date</th>
+                                        <th>No</th>
+                                        <th>Judul</th>
+                                        <th>Penulis</th>
+                                        <th>Kategori</th>
+                                        <th>Sampul</th>
+                                        <th>Tanggal Peminjaman</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>

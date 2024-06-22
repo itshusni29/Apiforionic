@@ -66,6 +66,29 @@ class BookLoanController extends Controller
         }
     }
 
+    public function index()
+    {
+        $loans = BookLoan::all();
+
+        if ($loans->isEmpty()) {
+            return response()->json(['message' => 'No loans found'], 404);
+        }
+
+        $transformedLoans = $loans->map(function ($loan) {
+            return [
+                'id' => $loan->id,
+                'user_id' => $loan->user_id,
+                'book_id' => $loan->book_id,
+                'status' => $loan->status,
+                'due_date' => $loan->due_date,
+                'returned_at' => $loan->returned_at,
+                // Jika diperlukan, Anda dapat menambahkan informasi tambahan lainnya
+            ];
+        });
+
+        return response()->json($transformedLoans, 200);
+    }
+
     public function borrowedBooksByUser()
     {
         $user = Auth::user();
@@ -77,4 +100,3 @@ class BookLoanController extends Controller
         return response()->json($borrowedBooks, 200);
     }
 }
-

@@ -25,31 +25,31 @@
               </div>
               <div class="col-lg-6">
                 <div class="card-body p-4 p-sm-5">
-                  <h5 class="card-title">Sign Up</h5>
-                  <p class="card-text mb-5">See your growth and get consulting support!</p>
+                  <h5 class="card-title">Daftar Disini Ya!</h5>
+                  <p class="card-text mb-5">Silahkan Daftar Dengan Akun Pribadi Kamu</p>
                   <form class="form-body" method="POST" action="{{ route('register') }}">
                     @csrf
                     <div class="login-separater text-center mb-4">
-                      <span>OR SIGN UP WITH EMAIL</span>
+                      <span>MASUK DENGAN EMAIL</span>
                       <hr>
                     </div>
                     <div class="row g-3">
                       <div class="col-12 ">
-                        <label for="inputName" class="form-label">Name</label>
+                        <label for="inputName" class="form-label">Nama</label>
                         <div class="ms-auto position-relative">
                           <div class="position-absolute top-50 translate-middle-y search-icon px-3"><i class="bi bi-person-circle"></i></div>
                           <input type="text" class="form-control radius-30 ps-5" id="inputName" name="name" placeholder="Enter Name" required>
                         </div>
                       </div>
                       <div class="col-12">
-                        <label for="inputEmailAddress" class="form-label">Email Address</label>
+                        <label for="inputEmailAddress" class="form-label">Alamat Email</label>
                         <div class="ms-auto position-relative">
                           <div class="position-absolute top-50 translate-middle-y search-icon px-3"><i class="bi bi-envelope-fill"></i></div>
                           <input type="email" class="form-control radius-30 ps-5" id="inputEmailAddress" name="email" placeholder="Email Address" required>
                         </div>
                       </div>
                       <div class="col-12">
-                        <label for="inputChoosePassword" class="form-label">Enter Password</label>
+                        <label for="inputChoosePassword" class="form-label">Kata Kunci</label>
                         <div class="ms-auto position-relative">
                           <div class="position-absolute top-50 translate-middle-y search-icon px-3"><i class="bi bi-lock-fill"></i></div>
                           <input type="password" class="form-control radius-30 ps-5" id="inputChoosePassword" name="password" placeholder="Enter Password" required>
@@ -58,12 +58,12 @@
                       <div class="col-12">
                         <div class="form-check form-switch">
                           <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" required>
-                          <label class="form-check-label" for="flexSwitchCheckChecked">I Agree to the Terms & Conditions</label>
+                          <label class="form-check-label" for="flexSwitchCheckChecked">Setuju dengan Syarat & Ketentuan</label>
                         </div>
                       </div>
                       <div class="col-12">
                         <div class="d-grid">
-                          <button type="submit" class="btn btn-primary radius-30">Sign Up</button>
+                          <button type="submit" class="btn btn-primary radius-30">BUAT AKUN</button>
                         </div>
                       </div>
                     </div>

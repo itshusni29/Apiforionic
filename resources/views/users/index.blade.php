@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
-                            <h5 class="mb-0">Customer Details</h5>
+                            <h5 class="mb-0">Daftar Pengguna</h5>
                             <form class="ms-auto position-relative">
                                 <div class="position-absolute top-50 translate-middle-y search-icon px-3"><i class="bi bi-search"></i></div>
                                 <input class="form-control ps-5" type="text" placeholder="search">
@@ -19,13 +19,13 @@
                             <table class="table align-middle">
                                 <thead class="table-secondary">
                                     <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Address</th>
-                                        <th>Phone Number</th>
-                                        <th>Roles</th>
-                                        <th>Gender</th>
+                                        <th>No</th>
+                                        <th>Nama</th>
+                                        <th>Alamat Email</th>
+                                        <th>Alamat</th>
+                                        <th>Nomor Telepon</th>
+                                        <th>Peran</th>
+                                        <th>Jenis Kelamin</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>

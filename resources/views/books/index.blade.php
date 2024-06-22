@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
-                            <h5 class="mb-0">Book Details</h5>
+                            <h5 class="mb-0">Daftar Buku</h5>
                             <form class="ms-auto position-relative">
                                 <div class="position-absolute top-50 translate-middle-y search-icon px-3"><i class="bi bi-search"></i></div>
                                 <input class="form-control ps-5" type="text" placeholder="search">
@@ -19,17 +19,17 @@
                             <table class="table align-middle">
                                 <thead class="table-secondary">
                                     <tr>
-                                        <th>#</th>
-                                        <th>Title</th>
-                                        <th>Author</th>
-                                        <th>Publisher</th>
-                                        <th>Publication Year</th>
-                                        <th>Category</th>
-                                        <th>Total Stock</th>
-                                        <th>Description</th>
-                                        <th>Ratings</th>
-                                        <th>Cover</th>
-                                        <th>Actions</th>
+                                        <th>No</th>
+                                        <th>Judul</th>
+                                        <th>Penulis</th>
+                                        <th>Penerbit</th>
+                                        <th>Tahun Terbit</th>
+                                        <th>Kategori</th>
+                                        <th>Total Tersedia</th>
+                                        <th>Deskripsi</th>
+                                        <th>Penilaian</th>
+                                        <th>Sampul</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>

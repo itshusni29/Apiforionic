@@ -9,17 +9,17 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
-                            <h5 class="mb-0">Customers with Borrowed Books</h5>
-                            <a href="{{ route('borrow.form') }}" class="btn btn-primary ms-auto">Borrow Book</a>
+                            <h5 class="mb-0">Peminjam Dan Buku Yang Dipinjam</h5>
+                            <a href="{{ route('borrow.form') }}" class="btn btn-primary ms-auto">Pinjam Buku</a>
                         </div>
                         <div class="table-responsive mt-3">
                             <table class="table align-middle">
                                 <thead class="table-secondary">
                                     <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
+                                        <th>No</th>
+                                        <th>Nama</th>
                                         <th>Email</th>
-                                        <th>Photo Profile</th>
+                                        <th>Profil Poto</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>

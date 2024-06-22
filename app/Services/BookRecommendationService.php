@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Book;
+use App\Models\BookLoan;
 use App\Models\Wishlist;
 use Illuminate\Support\Collection;
 
@@ -13,14 +14,20 @@ class BookRecommendationService
         // Ambil daftar buku dari wishlist pengguna
         $userWishlist = $this->getUserWishlist($userId);
 
-        // Ambil kategori yang paling sering muncul di wishlist
-        $mostFrequentCategory = $this->getMostFrequentCategory($userWishlist);
+        // Ambil daftar buku yang pernah dipinjam oleh pengguna
+        $userBorrowedBooks = $this->getUserBorrowedBooks($userId);
+
+        // Gabungkan wishlist dan buku yang pernah dipinjam
+        $combinedBooks = $userWishlist->merge($userBorrowedBooks);
+
+        // Ambil kategori yang paling sering muncul dari buku yang pernah dipinjam dan diinginkan
+        $mostFrequentCategory = $this->getMostFrequentCategory($combinedBooks);
 
         // Ambil buku-buku yang paling sering dipinjam dalam kategori yang sama
-        $recommendedBooks = $this->getRecommendedBooks($mostFrequentCategory);
+        $recommendedBooks = $this->getRecommendedBooks($mostFrequentCategory, $userId);
 
-        // Saring buku yang sudah ada di wishlist
-        $recommendedBooks = $this->filterBooksAlreadyInWishlist($recommendedBooks, $userWishlist);
+        // Saring buku yang sudah ada di wishlist atau pernah dipinjam
+        $recommendedBooks = $this->filterBooksAlreadyInWishlistOrBorrowed($recommendedBooks, $combinedBooks);
 
         return $recommendedBooks;
     }
@@ -29,35 +36,41 @@ class BookRecommendationService
     {
         return Wishlist::where('user_id', $userId)->pluck('book_id');
     }
-    protected function getMostFrequentCategory($wishlist)
+
+    protected function getUserBorrowedBooks($userId)
     {
-        // Menghitung frekuensi setiap kategori dalam wishlist
-        $categoryCounts = $wishlist->map(function ($bookId) {
+        return BookLoan::where('user_id', $userId)->where('status', 'Dipinjam')->pluck('book_id');
+    }
+
+    protected function getMostFrequentCategory($books)
+    {
+        // Menghitung frekuensi setiap kategori dalam koleksi buku
+        $categoryCounts = $books->map(function ($bookId) {
             $book = Book::find($bookId);
             if ($book) {
                 return $book->kategori;
             }
         })->countBy();
-    
+
         // Mengambil kategori dengan frekuensi tertinggi
         $mostFrequentCategory = $categoryCounts->sortDesc()->keys()->first();
-    
+
         return $mostFrequentCategory;
     }
-    
-    
 
-    protected function getRecommendedBooks($category)
+    protected function getRecommendedBooks($category, $userId)
     {
-        // Ambil buku-buku dalam kategori yang sama
-        return Book::where('kategori', $category)->get();
+        // Ambil buku-buku dalam kategori yang sama, kecuali yang sudah dipinjam atau diinginkan oleh user
+        return Book::where('kategori', $category)
+                   ->whereNotIn('id', $this->getUserWishlist($userId)->merge($this->getUserBorrowedBooks($userId))->toArray())
+                   ->get();
     }
 
-    protected function filterBooksAlreadyInWishlist($recommendedBooks, $wishlist)
+    protected function filterBooksAlreadyInWishlistOrBorrowed($recommendedBooks, $combinedBooks)
     {
-        // Memfilter buku yang sudah ada di wishlist
-        return $recommendedBooks->reject(function ($book) use ($wishlist) {
-            return $wishlist->contains($book->id);
+        // Memfilter buku yang sudah ada di wishlist atau pernah dipinjam
+        return $recommendedBooks->reject(function ($book) use ($combinedBooks) {
+            return $combinedBooks->contains($book->id);
         });
     }
 }

@@ -14,10 +14,10 @@
                                 <h4 class="my-1">{{ $totalBooks }}</h4>
                                 <p class="mb-0 font-13 text-{{ $percentageChangeBooks >= 0 ? 'success' : 'danger' }}">
                                     <i class="bi bi-caret-{{ $percentageChangeBooks >= 0 ? 'up' : 'down' }}-fill"></i> 
-                                    {{ number_format(abs($percentageChangeBooks), 2) }}% from last month
+                                    {{ number_format(abs($percentageChangeBooks), 2) }}% Sebulan Yang Lalu
                                 </p>
                           </div>
-                          <div class="widget-icon-large bg-gradient-purple text-white ms-auto"><i class="bi bi-basket2-fill"></i>
+                          <div class="widget-icon-large bg-gradient-purple text-white ms-auto"><i class="bi bi-book"></i>
                           </div>
                       </div>
                   </div>
@@ -28,14 +28,14 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0 text-secondary">Total User</p>
+                                <p class="mb-0 text-secondary">Total Pengguna</p>
                                 <h4 class="my-1">{{ $totalUsers }}</h4>
                                 <p class="mb-0 font-13 text-{{ $percentageChangeUsers >= 0 ? 'success' : 'danger' }}">
                                     <i class="bi bi-caret-{{ $percentageChangeUsers >= 0 ? 'up' : 'down' }}-fill"></i> 
-                                    {{ number_format(abs($percentageChangeUsers), 2) }}% from last month
+                                    {{ number_format(abs($percentageChangeUsers), 2) }}% Sebulan Yang Lalu
                                 </p>
                             </div>
-                            <div class="widget-icon-large bg-gradient-success text-white ms-auto"><i class="bi bi-currency-exchange"></i>
+                            <div class="widget-icon-large bg-gradient-success text-white ms-auto"><i class="bi bi-person"></i>
                             </div>
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                               <h4 class="my-1">{{ $totalLoans }}</h4>
                               <p class="mb-0 font-13 text-{{ $percentageChangeLoans >= 0 ? 'success' : 'danger' }}">
                                 <i class="bi bi-caret-{{ $percentageChangeLoans >= 0 ? 'up' : 'down' }}-fill"></i> 
-                                {{ number_format(abs($percentageChangeLoans), 2) }}% from last month
+                                {{ number_format(abs($percentageChangeLoans), 2) }}% Sebulan Yang Lalu
                               </p>
                           </div>
                           <div class="widget-icon-large bg-gradient-danger text-white ms-auto"><i class="bi bi-people-fill"></i>
@@ -64,11 +64,11 @@
                   <div class="card-body">
                       <div class="d-flex align-items-center">
                           <div>
-                              <p class="mb-0 text-secondary">Stock</p>
+                              <p class="mb-0 text-secondary">Buku Tersedia</p>
                               <h4 class="my-1">{{ $totalAvailableBooks }}</h4>
                               <p class="mb-0 font-13 text-success"><i class="bi bi-caret-up-fill"></i> - </p>
                           </div>
-                          <div class="widget-icon-large bg-gradient-info text-white ms-auto"><i class="bi bi-bar-chart-line-fill"></i>
+                          <div class="widget-icon-large bg-gradient-info text-white ms-auto"><i class="bi bi-book"></i>
                           </div>
                       </div>
                   </div>
@@ -86,8 +86,8 @@
                         </div>
                         <div class="col">
                           <div class="d-flex align-items-center justify-content-sm-end gap-3 cursor-pointer">
-                             <div class="font-13"><i class="bi bi-circle-fill text-primary"></i><span class="ms-2">Sales</span></div>
-                             <div class="font-13"><i class="bi bi-circle-fill text-success"></i><span class="ms-2">Orders</span></div>
+                             <div class="font-13"><i class="bi bi-circle-fill text-primary"></i><span class="ms-2">Buku Tersedia</span></div>
+                             <div class="font-13"><i class="bi bi-circle-fill text-success"></i><span class="ms-2">Buku Dipinjam</span></div>
                           </div>
                         </div>
                      </div>
@@ -100,7 +100,7 @@
                   <div class="card-header bg-transparent">
                     <div class="row g-3 align-items-center">
                       <div class="col">
-                        <h5 class="mb-0">Statistics</h5>
+                        <h5 class="mb-0">Statistik</h5>
                       </div>
                      </div>
                   </div>
@@ -108,11 +108,11 @@
                     <div id="chart2"></div>
                   </div>
                   <ul class="list-group list-group-flush mb-0">
-                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-top">New Orders<span class="badge bg-primary badge-pill">25%</span>
+                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-top">Buku Dipinjam<span class="badge bg-primary badge-pill">25%</span>
                 </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">Completed<span class="badge bg-orange badge-pill">65%</span>
+                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">Buku Kembali<span class="badge bg-orange badge-pill">65%</span>
                 </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">Pending<span class="badge bg-success badge-pill">10%</span>
+                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">Tertunda<span class="badge bg-success badge-pill">10%</span>
                 </li>
               </ul>
                 </div>
@@ -126,7 +126,7 @@
                  <div class="card-header bg-transparent">
                    <div class="row g-3 align-items-center">
                      <div class="col">
-                       <h5 class="mb-0">Top Categories</h5>
+                       <h5 class="mb-0">Kategori Teratas</h5>
                      </div>
                     </div>
                  </div>
@@ -153,7 +153,7 @@
                  <div class="card-header bg-transparent">
                    <div class="row g-3 align-items-center">
                      <div class="col">
-                       <h5 class="mb-0">Best Buku</h5>
+                       <h5 class="mb-0">Buku Terbaik</h5>
                      </div>
                     </div>
                  </div>

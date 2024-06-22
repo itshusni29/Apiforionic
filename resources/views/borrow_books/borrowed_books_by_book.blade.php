@@ -8,17 +8,17 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Borrowed Books</h5>
+                        <h5 class="card-title">List Buku Dipinjam</h5>
                         <div class="table-responsive mt-3">
                             <table class="table align-middle">
                                 <thead class="table-secondary">
                                     <tr>
-                                        <th>#</th>
-                                        <th>Cover</th>
-                                        <th>Title</th>
-                                        <th>Author</th>
-                                        <th>Borrower</th>
-                                        <th>Borrowed Date</th>
+                                        <th>No</th>
+                                        <th>Sampul</th>
+                                        <th>Judul</th>
+                                        <th>Penulis</th>
+                                        <th>Peminjam</th>
+                                        <th>Tanggal Pinjam</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>

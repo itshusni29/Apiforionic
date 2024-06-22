@@ -11,7 +11,7 @@ class Book extends Model
 
     protected $fillable = [
         'judul', 'pengarang', 'penerbit', 'tahun_terbit', 'kategori',
-        'total_stock', 'stock_available', 'deskripsi', 'ratings', 'cover'
+        'total_stock', 'stock_available', 'deskripsi', 'ratings', 'cover', 'artikel'
     ];
 
     public function loans()

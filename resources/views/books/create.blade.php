@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="border p-3 rounded">
-                            <h6 class="mb-0 text-uppercase">Create New Book</h6>
+                            <h6 class="mb-0 text-uppercase">Tambah Buku Baru</h6>
                             <hr/>
                             @if ($errors->any())
                                 <div class="alert alert-danger">
@@ -49,7 +49,7 @@
                                 </div>
 
                                 <div class="col-6">
-                                    <label class="form-label">Total Stock</label>
+                                    <label class="form-label">Total Stok</label>
                                     <input type="number" name="total_stock" class="form-control" value="{{ old('total_stock') }}">
                                 </div>
                                 <div class="col-12">
@@ -57,16 +57,16 @@
                                     <textarea name="deskripsi" class="form-control" rows="4">{{ old('deskripsi') }}</textarea>
                                 </div>
                                 <div class="col-6">
-                                    <label class="form-label">Ratings</label>
+                                    <label class="form-label">Penilaian</label>
                                     <input type="number" name="ratings" class="form-control" value="{{ old('ratings') }}">
                                 </div>
                                 <div class="col-6">
-                                    <label class="form-label">Cover</label>
+                                    <label class="form-label">Sampul</label>
                                     <input type="file" name="cover" class="form-control">
                                 </div>
                                 <div class="col-12">
                                     <div class="d-grid">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="submit" class="btn btn-primary">Tambahkan</button>
                                     </div>
                                 </div>
                             </form>

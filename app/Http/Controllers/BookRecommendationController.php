@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\BookRecommendationService;
+use Illuminate\Http\Request;
 
 class BookRecommendationController extends Controller
 {

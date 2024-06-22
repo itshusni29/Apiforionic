@@ -25,8 +25,8 @@
               </div>
               <div class="col-lg-6">
                 <div class="card-body p-4 p-sm-5">
-                  <h5 class="card-title">Sign In</h5>
-                  <p class="card-text mb-5">See your growth and get consulting support!</p>
+                  <h5 class="card-title">Masuk</h5>
+                  <p class="card-text mb-5">Selamat Berkerja Ya guyss!</p>
                   @if ($errors->any())
                     <div class="alert alert-danger">
                       <ul>
@@ -39,19 +39,19 @@
                   <form class="form-body" method="POST" action="{{ route('login') }}">
                     @csrf
                     <div class="login-separater text-center mb-4">
-                        <span>OR SIGN IN WITH EMAIL</span>
+                        <span>MASUK DENGAN EMAIL</span>
                         <hr>
                     </div>
                     <div class="row g-3">
                         <div class="col-12">
-                            <label for="inputEmailAddress" class="form-label">Email Address</label>
+                            <label for="inputEmailAddress" class="form-label">Masukan Email Kamu</label>
                             <div class="ms-auto position-relative">
                                 <div class="position-absolute top-50 translate-middle-y search-icon px-3"><i class="bi bi-envelope-fill"></i></div>
                                 <input type="email" class="form-control radius-30 ps-5" id="inputEmailAddress" name="email" placeholder="Email Address" required>
                             </div>
                         </div>
                         <div class="col-12">
-                            <label for="inputChoosePassword" class="form-label">Enter Password</label>
+                            <label for="inputChoosePassword" class="form-label">Masukan Kata Kunci</label>
                             <div class="ms-auto position-relative">
                                 <div class="position-absolute top-50 translate-middle-y search-icon px-3"><i class="bi bi-lock-fill"></i></div>
                                 <input type="password" class="form-control radius-30 ps-5" id="inputChoosePassword" name="password" placeholder="Enter Password" required>
@@ -60,7 +60,7 @@
                         <div class="col-6">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" name="remember" checked>
-                                <label class="form-check-label" for="flexSwitchCheckChecked">Remember Me</label>
+                                <label class="form-check-label" for="flexSwitchCheckChecked">Ingatkan Saya!</label>
                             </div>
                         </div>
                         <div class="col-6 text-end">
@@ -72,7 +72,7 @@
                             </div>
                         </div>
                         <div class="col-12">
-                            <p class="mb-0">Don't have an account yet? <a href="{{ route('register') }}">Sign up here</a></p>
+                            <p class="mb-0">Kamu belum punya akun? <a href="{{ route('register') }}">Daftar disini</a></p>
                         </div>
                     </div>
                 </form>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class WebUserController extends Controller
 {
@@ -22,7 +23,7 @@ class WebUserController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required',
             'alamat' => 'required',
             'nomor_telpon' => 'required',
@@ -31,7 +32,24 @@ class WebUserController extends Controller
             'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $user = User::create($request->all());
+        $photoPath = null;
+        if ($request->hasFile('photo_profile')) {
+            $photo = $request->file('photo_profile');
+            $fileName = time() . '.' . $photo->getClientOriginalExtension();
+            $photo->storeAs('public/photo_profiles', $fileName); // Store file in storage directory
+            $photoPath = 'photo_profiles/' . $fileName; // Store relative path to the photo profile
+        }
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'alamat' => $request->alamat,
+            'nomor_telpon' => $request->nomor_telpon,
+            'roles' => $request->roles,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'photo_profile' => $photoPath,
+        ]);
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
@@ -50,7 +68,7 @@ class WebUserController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'alamat' => 'required',
             'nomor_telpon' => 'required',
             'roles' => 'nullable',
@@ -58,40 +76,34 @@ class WebUserController extends Controller
             'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Jika input password kosong, gunakan password lama
-        if ($request->has('password') && $request->password !== null) {
+        // Handle password update
+        if ($request->filled('password')) {
             $request->validate([
                 'password' => 'required',
             ]);
-            $password = bcrypt($request->password);
-        } else {
-            $password = $user->password;
+            $user->password = Hash::make($request->password);
         }
 
-        // Update user
+        $photoPath = $user->photo_profile;
+        if ($request->hasFile('photo_profile')) {
+            $photo = $request->file('photo_profile');
+            $fileName = time() . '.' . $photo->getClientOriginalExtension();
+            $photo->storeAs('public/photo_profiles', $fileName); // Store file in storage directory
+            $photoPath = 'photo_profiles/' . $fileName; // Store relative path to the photo profile
+        }
+
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $password,    
             'alamat' => $request->alamat,
             'nomor_telpon' => $request->nomor_telpon,
             'roles' => $request->roles,
             'jenis_kelamin' => $request->jenis_kelamin,
+            'photo_profile' => $photoPath,
         ]);
-
-        // Penanganan foto profil
-        if ($request->hasFile('photo_profile')) {
-            $photo = $request->file('photo_profile');
-            $fileName = time() . '.' . $photo->getClientOriginalExtension();
-            $photo->storeAs('public/photo_profiles', $fileName); // Simpan file di direktori storage
-            $user->photo_profile = 'photo_profiles/' . $fileName; // Simpan path relatif ke foto profil
-            $user->save();
-        }
 
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
-    
-
 
     public function destroy(User $user)
     {

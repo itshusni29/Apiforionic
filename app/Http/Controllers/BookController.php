@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
+    // Index method for fetching books with filters
     public function index(Request $request)
     {
         $query = Book::query();
@@ -40,19 +41,25 @@ class BookController extends Controller
         return response()->json($books);
     }
 
+    // Store method for creating a new book
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'judul' => 'required',
-            'pengarang' => 'required',
-            'penerbit' => 'required',
-            'tahun_terbit' => 'required|date',
-            'kategori' => 'required',
-            'total_stock' => 'required|integer',
-            'deskripsi' => 'required',
-            'ratings' => 'nullable|numeric|min:0|max:10',
-            'cover' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
-        ]);
+        try {
+            $validated = $request->validate([
+                'judul' => 'required',
+                'pengarang' => 'required',
+                'penerbit' => 'required',
+                'tahun_terbit' => 'required|date',
+                'kategori' => 'required',
+                'total_stock' => 'required|integer',
+                'deskripsi' => 'required',
+                'ratings' => 'nullable|numeric|min:0|max:10',
+                'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
+                'artikel' => 'nullable|string', // Artikel sebagai string
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
+        }
 
         $book = new Book();
         $book->judul = $validated['judul'];
@@ -64,6 +71,7 @@ class BookController extends Controller
         $book->stock_available = $validated['total_stock']; // Set initial available stock to total stock
         $book->deskripsi = $validated['deskripsi'];
         $book->ratings = $validated['ratings'];
+        $book->artikel = $validated['artikel']; // Assign artikel value
 
         if ($request->hasFile('cover')) {
             $cover = $request->file('cover');
@@ -74,9 +82,10 @@ class BookController extends Controller
 
         $book->save();
 
-        return response()->json(['message' => 'Book created successfully'], 201);
+        return response()->json(['message' => 'Book created successfully', 'book' => $book], 201);
     }
 
+    // Show method to fetch a single book by ID
     public function show($id)
     {
         $book = Book::find($id);
@@ -91,19 +100,25 @@ class BookController extends Controller
         return response()->json($book);
     }
 
+    // Update method to update an existing book
     public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'judul' => 'required',
-            'pengarang' => 'required',
-            'penerbit' => 'required',
-            'tahun_terbit' => 'required|date',
-            'kategori' => 'required',
-            'total_stock' => 'required|integer',
-            'deskripsi' => 'required',
-            'ratings' => 'nullable|numeric|min:0|max:10',
-            'cover' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
-        ]);
+        try {
+            $validated = $request->validate([
+                'judul' => 'required',
+                'pengarang' => 'required',
+                'penerbit' => 'required',
+                'tahun_terbit' => 'required|date',
+                'kategori' => 'required',
+                'total_stock' => 'required|integer',
+                'deskripsi' => 'required',
+                'ratings' => 'nullable|numeric|min:0|max:10',
+                'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
+                'artikel' => 'nullable|string', // Artikel sebagai string
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
+        }
 
         $book = Book::find($id);
         if (!$book) {
@@ -119,6 +134,7 @@ class BookController extends Controller
         $book->stock_available = $validated['total_stock'] - $book->loans()->where('status', 'Dipinjam')->count(); // Adjust stock available
         $book->deskripsi = $validated['deskripsi'];
         $book->ratings = $validated['ratings'];
+        $book->artikel = $validated['artikel']; // Assign artikel value
 
         if ($request->hasFile('cover')) {
             $cover = $request->file('cover');
@@ -133,9 +149,10 @@ class BookController extends Controller
 
         $book->save();
 
-        return response()->json(['message' => 'Book updated successfully'], 200);
+        return response()->json(['message' => 'Book updated successfully', 'book' => $book], 200);
     }
 
+    // Delete method to delete a book by ID
     public function destroy($id)
     {
         $book = Book::find($id);
@@ -152,10 +169,11 @@ class BookController extends Controller
         return response()->json(['message' => 'Book deleted successfully'], 200);
     }
 
+    // Search method to search books based on a query parameter
     public function search(Request $request)
     {
         $query = $request->input('query');
-        
+
         if (!$query) {
             return response()->json(['message' => 'Query parameter is required'], 400);
         }

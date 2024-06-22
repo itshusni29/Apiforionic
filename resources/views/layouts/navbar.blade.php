@@ -6,7 +6,7 @@
         <div class="top-navbar d-none d-xl-block">
             <ul class="navbar-nav align-items-center">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('home') }}">Dashboard</a>
+                    <a class="nav-link" href="{{ route('home') }}">Beranda</a>
                 </li>
             </ul>
         </div>
@@ -46,7 +46,7 @@
                             <a class="dropdown-item" href="{{ route('users.show', ['user' => Auth::id()]) }}">
                                 <div class="d-flex align-items-center">
                                     <div class="setting-icon"><i class="bi bi-person-fill"></i></div>
-                                    <div class="setting-text ms-3"><span>Profile</span></div>
+                                    <div class="setting-text ms-3"><span>Profil</span></div>
                                 </div>
                             </a>
                         </li>
@@ -54,19 +54,23 @@
                             <a class="dropdown-item" href="{{ route('home') }}">
                                 <div class="d-flex align-items-center">
                                     <div class="setting-icon"><i class="bi bi-speedometer"></i></div>
-                                    <div class="setting-text ms-3"><span>Dashboard</span></div>
+                                    <div class="setting-text ms-3"><span>Beranda</span></div>
                                 </div>
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="{{ route('logout') }}">
-                                <div class="d-flex align-items-center">
-                                    <div class="setting-icon"><i class="bi bi-lock-fill"></i></div>
-                                    <div class="setting-text ms-3"><span>Logout</span></div>
-                                </div>
-                            </a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="setting-icon"><i class="bi bi-lock-fill"></i></div>
+                                        <div class="setting-text ms-3"><span>Keluar</span></div>
+                                    </div>
+                                </button>
+                            </form>
                         </li>
+
                     </ul>
                 </li>
             </ul>

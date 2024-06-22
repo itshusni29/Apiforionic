@@ -8,7 +8,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Borrow Book</h5>
+                        <h5 class="card-title">Pinjam Buku</h5>
                         @if (session('error'))
                             <div class="alert alert-danger">
                                 {{ session('error') }}
@@ -21,13 +21,13 @@
                         @endif
                         <form method="GET" action="{{ route('borrow.form') }}">
                             <div class="mb-3">
-                                <label for="search" class="form-label">Search Book</label>
+                                <label for="search" class="form-label">Cari Buku</label>
                                 <input class="form-control" type="text" id="search" name="search" placeholder="Type here to search">
                             </div>
                             <div class="mb-3">
-                                <label for="category" class="form-label">Filter by Category</label>
+                                <label for="category" class="form-label">Filter Berdasarkan Kategori</label>
                                 <select name="category" id="category" class="form-select">
-                                    <option value="">All Categories</option>
+                                    <option value="">Pilih Katageri</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category }}" {{ request()->get('category') == $category ? 'selected' : '' }}>{{ $category }}</option>
                                     @endforeach
@@ -39,7 +39,7 @@
                         <form method="POST" action="{{ route('borrow.book') }}">
                             @csrf
                             <div class="mb-3 mt-4">
-                                <label for="user_id" class="form-label">User</label>
+                                <label for="user_id" class="form-label">Pengguna</label>
                                 <select name="user_id" class="form-select" id="user_id">
                                     @foreach ($users as $user)
                                         <option value="{{ $user->id }}">{{ $user->name }}</option>
@@ -49,7 +49,7 @@
 
                             <div class="card bg-transparent shadow-none mt-4">
                                 <div class="card-body">
-                                    <h6 class="mb-0 text-uppercase">Select a Book</h6>
+                                    <h6 class="mb-0 text-uppercase">Pilih Buku</h6>
                                     <div class="my-3 border-top"></div>
                                     <div class="card-group">
                                         @foreach ($books as $book)
@@ -70,7 +70,7 @@
                             </div>
 
                             <div class="mt-3">
-                                <button type="submit" class="btn btn-primary">Borrow</button>
+                                <button type="submit" class="btn btn-primary">Pinjam</button>
                             </div>
                         </form>
                     </div>

@@ -11,7 +11,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(Request $request)  
     {
         try {
             $request->validate([
@@ -29,7 +29,7 @@ class AuthController extends Controller
                 ],
                 'alamat' => 'required|string',
                 'nomor_telpon' => 'required|string',
-                'jenis_kelamin' => 'required|string',
+                'jenis_kelamin' => 'required|string|in:L,P',
             ]);
         } catch (ValidationException $e) {
             return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
@@ -69,12 +69,15 @@ class AuthController extends Controller
         return response()->json(['message' => 'Unauthorized'], 401);
     }
 
-    public function logout(Request $request)
+    public function refresh()
     {
-        JWTAuth::parseToken()->invalidate();
+        $token = JWTAuth::refresh();
+        return response()->json(['token' => $token]);
+    }
+
+    public function logout()
+    {
+        JWTAuth::invalidate();
         return response()->json(['message' => 'Logout successful']);
     }
 }
-
-
-

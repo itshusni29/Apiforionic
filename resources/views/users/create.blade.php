@@ -9,20 +9,20 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="border p-3 rounded">
-                            <h6 class="mb-0 text-uppercase">Register form</h6>
+                            <h6 class="mb-0 text-uppercase">Formulir Pendaftaran</h6>
                             <hr/>
                             <form method="POST" action="{{ route('users.store') }}" class="row g-3">
                                 @csrf
                                 <div class="col-6">
-                                    <label class="form-label">Name</label>
+                                    <label class="form-label">Nama</label>
                                     <input type="text" name="name" class="form-control">
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label">Email ID</label>
+                                    <label class="form-label">Alamat Email</label>
                                     <input type="text" name="email" class="form-control">
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label">Password</label>
+                                    <label class="form-label">password</label>
                                     <input type="password" name="password" class="form-control">
                                 </div>
                                 <div class="col-12">
@@ -34,7 +34,7 @@
                                     <input type="text" name="nomor_telpon" class="form-control">
                                 </div>
                                 <div class="col-6">
-                                    <label class="form-label">Roles</label>
+                                    <label class="form-label">Peran</label>
                                     <input type="text" name="roles" class="form-control">
                                 </div>
                                 <div class="col-6">
@@ -42,7 +42,7 @@
                                     <input type="text" name="jenis_kelamin" class="form-control">
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label">Photo Profile</label>
+                                    <label class="form-label">Profil Poto</label>
                                     <input type="file" name="photo_profile" class="form-control">
                                 </div>
                                 <div class="col-12">
