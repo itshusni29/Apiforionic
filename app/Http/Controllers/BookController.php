@@ -55,7 +55,7 @@ class BookController extends Controller
                 'deskripsi' => 'required',
                 'ratings' => 'nullable|numeric|min:0|max:10',
                 'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
-                'artikel' => 'nullable|string', // Artikel sebagai string
+                'artikel' => 'nullable|file|mimes:pdf|max:2048', // max 2MB for PDF files
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
@@ -71,13 +71,21 @@ class BookController extends Controller
         $book->stock_available = $validated['total_stock']; // Set initial available stock to total stock
         $book->deskripsi = $validated['deskripsi'];
         $book->ratings = $validated['ratings'];
-        $book->artikel = $validated['artikel']; // Assign artikel value
 
+        // Handle artikel file upload
+        if ($request->hasFile('artikel')) {
+            $artikelFile = $request->file('artikel');
+            $artikelFileName = time() . '.' . $artikelFile->getClientOriginalExtension();
+            $artikelFile->storeAs('public/artikels', $artikelFileName); // Store file in storage directory
+            $book->artikel = 'artikels/' . $artikelFileName; // Store relative path to the PDF file
+        }
+
+        // Handle cover image upload
         if ($request->hasFile('cover')) {
             $cover = $request->file('cover');
-            $fileName = time() . '.' . $cover->getClientOriginalExtension();
-            $cover->storeAs('public/covers', $fileName); // Store file in storage directory
-            $book->cover = 'covers/' . $fileName; // Store relative path to the image
+            $coverFileName = time() . '.' . $cover->getClientOriginalExtension();
+            $cover->storeAs('public/covers', $coverFileName); // Store file in storage directory
+            $book->cover = 'covers/' . $coverFileName; // Store relative path to the image
         }
 
         $book->save();
@@ -97,6 +105,10 @@ class BookController extends Controller
             $book->cover = asset('storage/' . $book->cover);
         }
 
+        if ($book->artikel) {
+            $book->artikel = asset('storage/' . $book->artikel);
+        }
+
         return response()->json($book);
     }
 
@@ -114,7 +126,7 @@ class BookController extends Controller
                 'deskripsi' => 'required',
                 'ratings' => 'nullable|numeric|min:0|max:10',
                 'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
-                'artikel' => 'nullable|string', // Artikel sebagai string
+                'artikel' => 'nullable|file|mimes:pdf|max:2048', // max 2MB for PDF files
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
@@ -134,17 +146,33 @@ class BookController extends Controller
         $book->stock_available = $validated['total_stock'] - $book->loans()->where('status', 'Dipinjam')->count(); // Adjust stock available
         $book->deskripsi = $validated['deskripsi'];
         $book->ratings = $validated['ratings'];
-        $book->artikel = $validated['artikel']; // Assign artikel value
 
+        // Handle artikel file update
+        if ($request->hasFile('artikel')) {
+            $artikelFile = $request->file('artikel');
+            $artikelFileName = time() . '.' . $artikelFile->getClientOriginalExtension();
+            $artikelFile->storeAs('public/artikels', $artikelFileName); // Store file in storage directory
+
+            // Delete old artikel file if exists
+            if ($book->artikel) {
+                Storage::delete('public/' . $book->artikel);
+            }
+
+            $book->artikel = 'artikels/' . $artikelFileName; // Store relative path to the PDF file
+        }
+
+        // Handle cover image update
         if ($request->hasFile('cover')) {
             $cover = $request->file('cover');
-            $fileName = time() . '.' . $cover->getClientOriginalExtension();
-            $cover->storeAs('public/covers', $fileName); // Store file in storage directory
+            $coverFileName = time() . '.' . $cover->getClientOriginalExtension();
+            $cover->storeAs('public/covers', $coverFileName); // Store file in storage directory
+
             // Delete old cover file if exists
             if ($book->cover) {
                 Storage::delete('public/' . $book->cover);
             }
-            $book->cover = 'covers/' . $fileName;
+
+            $book->cover = 'covers/' . $coverFileName; // Store relative path to the image
         }
 
         $book->save();
@@ -164,6 +192,12 @@ class BookController extends Controller
         if ($book->cover) {
             Storage::delete('public/' . $book->cover);
         }
+
+        // Delete artikel file if exists before deleting the book
+        if ($book->artikel) {
+            Storage::delete('public/' . $book->artikel);
+        }
+
         $book->delete();
 
         return response()->json(['message' => 'Book deleted successfully'], 200);
@@ -186,6 +220,9 @@ class BookController extends Controller
         foreach ($books as $book) {
             if ($book->cover) {
                 $book->cover = asset('storage/' . $book->cover);
+            }
+            if ($book->artikel) {
+                $book->artikel = asset('storage/' . $book->artikel);
             }
         }
 
