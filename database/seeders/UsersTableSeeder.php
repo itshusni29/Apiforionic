@@ -15,21 +15,11 @@ class UsersTableSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'email' => 'admin@admin.com',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('Hhsni29'),
                 'alamat' => 'Jalan Pahlawan No. 123',
                 'nomor_telpon' => '08123456789',
                 'roles' => 'admin',
                 'jenis_kelamin' => 'L',
-                // 'photo_profile' => 'default.jpg', // Anda bisa menambahkan ini jika perlu
-            ],
-            [
-                'name' => 'User',
-                'email' => 'user@user.com',
-                'password' => Hash::make('password'),
-                'alamat' => 'Jalan Merdeka No. 456',
-                'nomor_telpon' => '08987654321',
-                'roles' => 'user',
-                'jenis_kelamin' => 'P',
                 // 'photo_profile' => 'default.jpg', // Anda bisa menambahkan ini jika perlu
             ],
             // Tambahkan data pengguna lainnya sesuai kebutuhan
