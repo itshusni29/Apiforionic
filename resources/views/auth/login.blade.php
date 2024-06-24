@@ -29,11 +29,9 @@
                   <p class="card-text mb-5">Selamat Berkerja Ya guyss!</p>
                   @if ($errors->any())
                     <div class="alert alert-danger">
-                      <ul>
-                        @foreach ($errors->all() as $error)
-                          <li>{{ $error }}</li>
-                        @endforeach
-                      </ul>
+                      @foreach ($errors->all() as $error)
+                        <p>{{ $error }}</p>
+                      @endforeach
                     </div>
                   @endif
                   <form class="form-body" method="POST" action="{{ route('login') }}">
@@ -47,14 +45,20 @@
                             <label for="inputEmailAddress" class="form-label">Masukan Email Kamu</label>
                             <div class="ms-auto position-relative">
                                 <div class="position-absolute top-50 translate-middle-y search-icon px-3"><i class="bi bi-envelope-fill"></i></div>
-                                <input type="email" class="form-control radius-30 ps-5" id="inputEmailAddress" name="email" placeholder="Email Address" required>
+                                <input type="email" class="form-control radius-30 ps-5 @error('email') is-invalid @enderror" id="inputEmailAddress" name="email" placeholder="Email Address" value="{{ old('email') }}" required>
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-12">
                             <label for="inputChoosePassword" class="form-label">Masukan Kata Kunci</label>
                             <div class="ms-auto position-relative">
                                 <div class="position-absolute top-50 translate-middle-y search-icon px-3"><i class="bi bi-lock-fill"></i></div>
-                                <input type="password" class="form-control radius-30 ps-5" id="inputChoosePassword" name="password" placeholder="Enter Password" required>
+                                <input type="password" class="form-control radius-30 ps-5 @error('password') is-invalid @enderror" id="inputChoosePassword" name="password" placeholder="Enter Password" required>
+                                @error('password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-6">
@@ -75,8 +79,7 @@
                             <p class="mb-0">Kamu belum punya akun? <a href="{{ route('register') }}">Daftar disini</a></p>
                         </div>
                     </div>
-                </form>
-
+                  </form>
                 </div>
               </div>
             </div>

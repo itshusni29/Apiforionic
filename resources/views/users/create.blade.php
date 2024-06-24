@@ -39,7 +39,10 @@
                                 </div>
                                 <div class="col-6">
                                     <label class="form-label">Jenis Kelamin</label>
-                                    <input type="text" name="jenis_kelamin" class="form-control">
+                                    <select name="jenis_kelamin" class="form-control">
+                                        <option value="L">Laki - laki</option>
+                                        <option value="P">Perempuan</option>
+                                    </select>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Profil Poto</label>

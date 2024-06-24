@@ -27,6 +27,15 @@
                 <div class="card-body p-4 p-sm-5">
                   <h5 class="card-title">Daftar Disini Ya!</h5>
                   <p class="card-text mb-5">Silahkan Daftar Dengan Akun Pribadi Kamu</p>
+                  @if ($errors->any())
+                    <div class="alert alert-danger">
+                      <ul>
+                        @foreach ($errors->all() as $error)
+                          <li>{{ $error }}</li>
+                        @endforeach
+                      </ul>
+                    </div>
+                  @endif
                   <form class="form-body" method="POST" action="{{ route('register') }}">
                     @csrf
                     <div class="login-separater text-center mb-4">
@@ -38,26 +47,32 @@
                         <label for="inputName" class="form-label">Nama</label>
                         <div class="ms-auto position-relative">
                           <div class="position-absolute top-50 translate-middle-y search-icon px-3"><i class="bi bi-person-circle"></i></div>
-                          <input type="text" class="form-control radius-30 ps-5" id="inputName" name="name" placeholder="Enter Name" required>
+                          <input type="text" class="form-control radius-30 ps-5" id="inputName" name="name" placeholder="Enter Name" value="{{ old('name') }}" required>
                         </div>
                       </div>
                       <div class="col-12">
                         <label for="inputEmailAddress" class="form-label">Alamat Email</label>
                         <div class="ms-auto position-relative">
                           <div class="position-absolute top-50 translate-middle-y search-icon px-3"><i class="bi bi-envelope-fill"></i></div>
-                          <input type="email" class="form-control radius-30 ps-5" id="inputEmailAddress" name="email" placeholder="Email Address" required>
+                          <input type="email" class="form-control radius-30 ps-5 @error('email') is-invalid @enderror" id="inputEmailAddress" name="email" placeholder="Email Address" value="{{ old('email') }}" required>
+                          @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                          @enderror
                         </div>
                       </div>
                       <div class="col-12">
                         <label for="inputChoosePassword" class="form-label">Kata Kunci</label>
                         <div class="ms-auto position-relative">
                           <div class="position-absolute top-50 translate-middle-y search-icon px-3"><i class="bi bi-lock-fill"></i></div>
-                          <input type="password" class="form-control radius-30 ps-5" id="inputChoosePassword" name="password" placeholder="Enter Password" required>
+                          <input type="password" class="form-control radius-30 ps-5 @error('password') is-invalid @enderror" id="inputChoosePassword" name="password" placeholder="Enter Password" required>
+                          @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                          @enderror
                         </div>
                       </div>
                       <div class="col-12">
                         <div class="form-check form-switch">
-                          <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" required>
+                          <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" name="agree" required>
                           <label class="form-check-label" for="flexSwitchCheckChecked">Setuju dengan Syarat & Ketentuan</label>
                         </div>
                       </div>

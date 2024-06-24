@@ -15,14 +15,12 @@ class UsersTableSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'email' => 'admin@admin.com',
-                'password' => Hash::make('Hhsni29'),
+                'password' => Hash::make('password'),
                 'alamat' => 'Jalan Pahlawan No. 123',
                 'nomor_telpon' => '08123456789',
                 'roles' => 'admin',
                 'jenis_kelamin' => 'L',
-                // 'photo_profile' => 'default.jpg', // Anda bisa menambahkan ini jika perlu
             ],
-            // Tambahkan data pengguna lainnya sesuai kebutuhan
         ];
 
         // Looping untuk memasukkan data ke dalam database

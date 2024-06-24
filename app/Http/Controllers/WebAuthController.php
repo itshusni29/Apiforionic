@@ -61,8 +61,7 @@ class WebAuthController extends Controller
         // Otomatis login setelah registrasi
         Auth::attempt($request->only('email', 'password'));
 
-        // Redirect ke halaman setelah login
-        return redirect('/dashboard'); // Ganti '/dashboard' dengan halaman yang ingin dituju setelah registrasi berhasil
+        return redirect('login');
     }
 
     // Method untuk logout

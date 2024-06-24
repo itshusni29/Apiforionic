@@ -40,7 +40,10 @@
                                 </div>
                                 <div class="col-6">
                                     <label class="form-label">Jenis Kelamin</label>
-                                    <input type="text" name="jenis_kelamin" value="{{ $user->jenis_kelamin }}" class="form-control">
+                                    <select name="jenis_kelamin" class="form-control">
+                                        <option value="L" {{ $user->jenis_kelamin == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                        <option value="P" {{ $user->jenis_kelamin == 'P' ? 'selected' : '' }}>Perempuan</option>
+                                    </select>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Photo Profile @if(!$user->photo_profile) <span class="text-danger">(required)</span> @endif</label>
