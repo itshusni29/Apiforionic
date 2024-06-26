@@ -14,6 +14,11 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
+        foreach ($users as $user) {
+            if ($user->photo_profile) {
+                $user->photo_profile = asset('storage/' . $user->photo_profile);
+            }
+        }
         return response()->json(['users' => $users], 200);
     }
 
@@ -52,7 +57,7 @@ class UserController extends Controller
 
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email, 
+            'email' => $request->email,
             'password' => Hash::make($request->password),
             'alamat' => $request->alamat,
             'nomor_telpon' => $request->nomor_telpon,
@@ -119,13 +124,16 @@ class UserController extends Controller
             $user->jenis_kelamin = $request->jenis_kelamin;
         }
 
-        $user->save();  
+        $user->save();
 
         return response()->json(['user' => $user], 200);
     }
 
     public function show(User $user)
     {
+        if ($user->photo_profile) {
+            $user->photo_profile = asset('storage/' . $user->photo_profile);
+        }
         return response()->json(['user' => $user], 200);
     }
 
@@ -138,7 +146,12 @@ class UserController extends Controller
 
         try {
             $userName = $user->name; // Get the name of the user being deleted
-            
+
+            // Delete photo file if exists before deleting the user
+            if ($user->photo_profile) {
+                Storage::delete('public/' . $user->photo_profile);
+            }
+
             // Attempt to delete the user
             $user->delete();
 

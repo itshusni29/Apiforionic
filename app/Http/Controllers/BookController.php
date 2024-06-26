@@ -5,9 +5,61 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 class BookController extends Controller
 {
+    // Validation rules method
+    protected function validationRules($isUpdate = false)
+    {
+        $rules = [
+            'judul' => 'required',
+            'pengarang' => 'required',
+            'penerbit' => 'required',
+            'tahun_terbit' => 'required|date',
+            'kategori' => 'required',
+            'total_stock' => 'required|integer',
+            'deskripsi' => 'required',
+            'ratings' => 'nullable|numeric|min:0|max:10',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB for images
+            'artikel' => 'nullable|file|mimes:pdf|max:15360', // max 15MB for PDF files
+        ];
+
+        if ($isUpdate) {
+            $rules = array_map(function ($rule) {
+                return str_replace('required', 'nullable', $rule);
+            }, $rules);
+        }
+
+        return $rules;
+    }
+
+    // Handle file upload for cover and artikel
+    protected function handleFileUpload(Request $request, Book $book)
+    {
+        // Handle artikel file upload
+        if ($request->hasFile('artikel')) {
+            if ($book->artikel) {
+                Storage::delete('public/' . $book->artikel);
+            }
+            $artikelFile = $request->file('artikel');
+            $artikelFileName = time() . '_artikel.' . $artikelFile->getClientOriginalExtension();
+            $artikelFile->storeAs('public/artikels', $artikelFileName);
+            $book->artikel = 'artikels/' . $artikelFileName;
+        }
+
+        // Handle cover image upload
+        if ($request->hasFile('cover')) {
+            if ($book->cover) {
+                Storage::delete('public/' . $book->cover);
+            }
+            $coverFile = $request->file('cover');
+            $coverFileName = time() . '_cover.' . $coverFile->getClientOriginalExtension();
+            $coverFile->storeAs('public/covers', $coverFileName);
+            $book->cover = 'covers/' . $coverFileName;
+        }
+    }
+
     // Index method for fetching books with filters
     public function index(Request $request)
     {
@@ -36,6 +88,9 @@ class BookController extends Controller
             if ($book->cover) {
                 $book->cover = asset('storage/' . $book->cover);
             }
+            if ($book->artikel) {
+                $book->artikel = asset('storage/' . $book->artikel);
+            }
         }
 
         return response()->json($books);
@@ -44,22 +99,7 @@ class BookController extends Controller
     // Store method for creating a new book
     public function store(Request $request)
     {
-        try {
-            $validated = $request->validate([
-                'judul' => 'required',
-                'pengarang' => 'required',
-                'penerbit' => 'required',
-                'tahun_terbit' => 'required|date',
-                'kategori' => 'required',
-                'total_stock' => 'required|integer',
-                'deskripsi' => 'required',
-                'ratings' => 'nullable|numeric|min:0|max:10',
-                'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
-                'artikel' => 'nullable|file|mimes:pdf|max:2048', // max 2MB for PDF files
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
-        }
+        $validated = $request->validate($this->validationRules());
 
         $book = new Book();
         $book->judul = $validated['judul'];
@@ -72,21 +112,7 @@ class BookController extends Controller
         $book->deskripsi = $validated['deskripsi'];
         $book->ratings = $validated['ratings'];
 
-        // Handle artikel file upload
-        if ($request->hasFile('artikel')) {
-            $artikelFile = $request->file('artikel');
-            $artikelFileName = time() . '.' . $artikelFile->getClientOriginalExtension();
-            $artikelFile->storeAs('public/artikels', $artikelFileName); // Store file in storage directory
-            $book->artikel = 'artikels/' . $artikelFileName; // Store relative path to the PDF file
-        }
-
-        // Handle cover image upload
-        if ($request->hasFile('cover')) {
-            $cover = $request->file('cover');
-            $coverFileName = time() . '.' . $cover->getClientOriginalExtension();
-            $cover->storeAs('public/covers', $coverFileName); // Store file in storage directory
-            $book->cover = 'covers/' . $coverFileName; // Store relative path to the image
-        }
+        $this->handleFileUpload($request, $book);
 
         $book->save();
 
@@ -115,65 +141,21 @@ class BookController extends Controller
     // Update method to update an existing book
     public function update(Request $request, $id)
     {
-        try {
-            $validated = $request->validate([
-                'judul' => 'required',
-                'pengarang' => 'required',
-                'penerbit' => 'required',
-                'tahun_terbit' => 'required|date',
-                'kategori' => 'required',
-                'total_stock' => 'required|integer',
-                'deskripsi' => 'required',
-                'ratings' => 'nullable|numeric|min:0|max:10',
-                'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
-                'artikel' => 'nullable|file|mimes:pdf|max:2048', // max 2MB for PDF files
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
-        }
+        $validated = $request->validate($this->validationRules(true));
 
         $book = Book::find($id);
         if (!$book) {
             return response()->json(['message' => 'Book not found'], 404);
         }
 
-        $book->judul = $validated['judul'];
-        $book->pengarang = $validated['pengarang'];
-        $book->penerbit = $validated['penerbit'];
-        $book->tahun_terbit = $validated['tahun_terbit'];
-        $book->kategori = $validated['kategori'];
-        $book->total_stock = $validated['total_stock'];
-        $book->stock_available = $validated['total_stock'] - $book->loans()->where('status', 'Dipinjam')->count(); // Adjust stock available
-        $book->deskripsi = $validated['deskripsi'];
-        $book->ratings = $validated['ratings'];
+        // Only update the fields that are present in the request
+        $book->fill(array_filter($validated));
 
-        // Handle artikel file update
-        if ($request->hasFile('artikel')) {
-            $artikelFile = $request->file('artikel');
-            $artikelFileName = time() . '.' . $artikelFile->getClientOriginalExtension();
-            $artikelFile->storeAs('public/artikels', $artikelFileName); // Store file in storage directory
-
-            // Delete old artikel file if exists
-            if ($book->artikel) {
-                Storage::delete('public/' . $book->artikel);
-            }
-
-            $book->artikel = 'artikels/' . $artikelFileName; // Store relative path to the PDF file
+        if (isset($validated['total_stock'])) {
+            $book->stock_available = $validated['total_stock'] - $book->loans()->where('status', 'Dipinjam')->count();
         }
 
-        // Handle cover image update
-        if ($request->hasFile('cover')) {
-            $cover = $request->file('cover');
-            $coverFileName = time() . '.' . $cover->getClientOriginalExtension();
-            $cover->storeAs('public/covers', $coverFileName); // Store file in storage directory
-
-            // Delete old cover file if exists
-            if ($book->cover) {
-                Storage::delete('public/' . $book->cover);
-            }
-
-            $book->cover = 'covers/' . $coverFileName; // Store relative path to the image
-        }
+        $this->handleFileUpload($request, $book);
 
         $book->save();
 
@@ -227,5 +209,33 @@ class BookController extends Controller
         }
 
         return response()->json($books);
+    }
+
+    // Method to fetch and return PDF file content
+    public function getPdf(Request $request, $id)
+    {
+        $book = Book::find($id);
+        if (!$book) {
+            return response()->json(['message' => 'Book not found'], 404);
+        }
+
+        // Ensure artikel (PDF file) exists for the book
+        if (!$book->artikel) {
+            return response()->json(['message' => 'PDF file not found for this book'], 404);
+        }
+
+        // Get the storage path for the artikel file
+        $artikelPath = storage_path('app/public/' . $book->artikel);
+
+        // Check if the file exists
+        if (!file_exists($artikelPath)) {
+            return response()->json(['message' => 'PDF file not found in storage'], 404);
+        }
+
+        // Return the PDF file as a response
+        return response()->file($artikelPath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . basename($artikelPath) . '"'
+        ]);
     }
 }

@@ -5,51 +5,57 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <div class="col-6 col-lg-4">
-                <div class="card shadow-sm border-0 overflow-hidden">
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
                     <div class="card-body">
-                        <div class="profile-avatar text-center">
-                            @if($book->cover)
-                                <img src="{{ asset('storage/' . $book->cover) }}" class="rounded-circle shadow" width="120" height="120" alt="{{ $book->judul }}">
-                            @else
-                                <p>No cover available</p>
-                            @endif
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="profile-avatar text-center">
+                                    @if($book->cover)
+                                        <img src="{{ asset('storage/' . $book->cover) }}" class="img-fluid rounded shadow" alt="{{ $book->judul }}">
+                                    @else
+                                        <p class="text-muted text-center">No cover available</p>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <h2 class="mb-3">{{ $book->judul }}</h2>
+                                <p class="text-muted mb-3">By {{ $book->pengarang }}</p>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Publisher:</strong> {{ $book->penerbit }}</p>
+                                        <p><strong>Publication Year:</strong> {{ $book->tahun_terbit }}</p>
+                                        <p><strong>Category:</strong> {{ $book->kategori }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Total Stock:</strong> {{ $book->total_stock }}</p>
+                                        <p><strong>Stock Available:</strong> {{ $book->stock_available }}</p>
+                                        <p><strong>Ratings:</strong> {{ $book->ratings }}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p><strong>Description:</strong></p>
+                                        <p>{{ $book->deskripsi }}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @if($book->artikel)
+                                            <p><strong>PDF:</strong> <a href="{{ asset('storage/' . $book->artikel) }}" target="_blank">View PDF</a></p>
+                                        @else
+                                            <p><strong>PDF:</strong> No PDF available</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="text-center mt-4">
-                            <h4 class="mb-1">{{ $book->judul }}</h4>
-                            <p class="mb-0 text-secondary">{{ $book->pengarang }}</p>
-                            <div class="mt-4"></div>
-                        </div>
-                        <hr>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-top">
-                            Publisher
-                            <span class="badge bg-primary rounded-pill">{{ $book->penerbit }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
-                            Publication Year
-                            <span class="badge bg-primary rounded-pill">{{ $book->tahun_terbit }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
-                            Category
-                            <span class="badge bg-primary rounded-pill">{{ $book->kategori }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
-                            Total Stock
-                            <span class="badge bg-primary rounded-pill">{{ $book->total_stock }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
-                            Description
-                            <span class="badge bg-primary rounded-pill">{{ $book->deskripsi }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
-                            Ratings
-                            <span class="badge bg-primary rounded-pill">{{ $book->ratings }}</span>
-                        </li>
-                    </ul>
                 </div>
             </div>
-        </div><!--end row-->
-    </div>
+        </div><!-- end row -->
+    </div><!-- end container-fluid -->
 @endsection

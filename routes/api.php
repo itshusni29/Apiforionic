@@ -43,6 +43,7 @@ Route::middleware(['jwt.auth'])->group(function () {
     Route::get('/books', [BookController::class, 'index']);
     Route::get('/books/search', [BookController::class, 'search']);
     Route::get('/books/{book}', [BookController::class, 'show']);
+    Route::get('/books/{book}/pdf', [BookController::class, 'getPdf']);
 
     // Book loan routes
     Route::get('/borrowed-books', [BookLoanController::class, 'index']);

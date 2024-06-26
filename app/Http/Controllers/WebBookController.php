@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class WebBookController extends Controller
 {
@@ -36,10 +36,10 @@ class WebBookController extends Controller
                 'deskripsi' => 'required',
                 'ratings' => 'nullable|numeric|min:0|max:10',
                 'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
-                'artikel' => 'nullable|file|mimes:pdf|max:2048', // max 2MB for PDF files
+                'artikel' => 'nullable|file|mimes:pdf|max:15360', // max 15MB for PDF files
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->withErrors(['error' => 'Validation failed: ' . $e->getMessage()]);
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
         }
 
         $book = new Book();
@@ -49,7 +49,7 @@ class WebBookController extends Controller
         $book->tahun_terbit = $validated['tahun_terbit'];
         $book->kategori = $validated['kategori'];
         $book->total_stock = $validated['total_stock'];
-        $book->stock_available = $validated['total_stock']; // Set initial available stock to total stock
+        $book->stock_available = $validated['total_stock'];
         $book->deskripsi = $validated['deskripsi'];
         $book->ratings = $validated['ratings'];
 
@@ -100,43 +100,59 @@ class WebBookController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'judul' => 'required',
-            'pengarang' => 'required',
-            'penerbit' => 'required',
-            'tahun_terbit' => 'required|date',
-            'kategori' => 'required', // Kategori harus diisi
-            'total_stock' => 'required|integer',
-            'deskripsi' => 'required',
-            'ratings' => 'nullable|numeric|min:0|max:10',
-            'cover' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
-            'artikel' => 'nullable|file|mimes:pdf|max:2048', // max 2MB for PDF files
-        ]);
-
         $book = Book::find($id);
         if (!$book) {
             return redirect()->route('books.index')->with('error', 'Book not found.');
         }
-
-        // Memeriksa apakah kategori yang diinputkan ada di dalam daftar kategori yang tersedia
-        $categories = [
-            'Fiksi', 'Non-fiksi', 'Novel', 'Cerpen', 'Drama', 'Puisi', 'Biografi', 'Sejarah', 'Ilmiah', 'Teknologi', 'Bisnis', 'Kesehatan', 'Seni', 'Musik', 'Pendidikan', 'Agama', 'Filosofi', 'Politik', 'Psikologi', 'Hukum', 'Perjalanan', 'Kuliner', 'Olahraga', 'Alam', 'Petualangan',
-        ];
-
-        if (!in_array($request->kategori, $categories)) {
-            return redirect()->back()->withErrors(['kategori' => 'Invalid category selected.']);
+    
+        // Validasi data yang diperbarui
+        $validated = $request->validate([
+            'judul' => 'nullable',
+            'pengarang' => 'nullable',
+            'penerbit' => 'nullable',
+            'tahun_terbit' => 'nullable|date',
+            'kategori' => ['nullable', function ($attribute, $value, $fail) {
+                $categories = [
+                    'Fiksi', 'Non-fiksi', 'Novel', 'Cerpen', 'Drama', 'Puisi', 'Biografi', 'Sejarah', 'Ilmiah', 'Teknologi', 'Bisnis', 'Kesehatan', 'Seni', 'Musik', 'Pendidikan', 'Agama', 'Filosofi', 'Politik', 'Psikologi', 'Hukum', 'Perjalanan', 'Kuliner', 'Olahraga', 'Alam', 'Petualangan',
+                ];
+                if (!in_array($value, $categories)) {
+                    $fail('Invalid category selected.');
+                }
+            }],
+            'total_stock' => 'nullable|integer',
+            'deskripsi' => 'nullable',
+            'ratings' => 'nullable|numeric|min:0|max:10',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2MB
+            'artikel' => 'nullable|file|mimes:pdf|max:15360', // max 15MB for PDF files
+        ]);
+    
+        // Simpan data yang diperbarui
+        if (isset($validated['judul'])) {
+            $book->judul = $validated['judul'];
         }
-
-        $book->judul = $request->judul;
-        $book->pengarang = $request->pengarang;
-        $book->penerbit = $request->penerbit;
-        $book->tahun_terbit = $request->tahun_terbit;
-        $book->kategori = $request->kategori;
-        $book->total_stock = $request->total_stock;
-        $book->stock_available = $request->total_stock - $book->loans()->where('status', 'Dipinjam')->count(); // Adjust stock available
-        $book->deskripsi = $request->deskripsi;
-        $book->ratings = $request->ratings;
-
+        if (isset($validated['pengarang'])) {
+            $book->pengarang = $validated['pengarang'];
+        }
+        if (isset($validated['penerbit'])) {
+            $book->penerbit = $validated['penerbit'];
+        }
+        if (isset($validated['tahun_terbit'])) {
+            $book->tahun_terbit = $validated['tahun_terbit'];
+        }
+        if (isset($validated['kategori'])) {
+            $book->kategori = $validated['kategori'];
+        }
+        if (isset($validated['total_stock'])) {
+            $book->total_stock = $validated['total_stock'];
+            $book->stock_available = $validated['total_stock'] - $book->loans()->where('status', 'Dipinjam')->count(); // Adjust stock available
+        }
+        if (isset($validated['deskripsi'])) {
+            $book->deskripsi = $validated['deskripsi'];
+        }
+        if (isset($validated['ratings'])) {
+            $book->ratings = $validated['ratings'];
+        }
+    
         // Handle artikel file upload
         if ($request->hasFile('artikel')) {
             // Hapus file artikel lama jika ada
@@ -148,7 +164,7 @@ class WebBookController extends Controller
             $artikelFile->storeAs('public/artikels', $artikelFileName); // Store file in storage directory
             $book->artikel = 'artikels/' . $artikelFileName; // Store relative path to the PDF file
         }
-
+    
         // Handle cover image upload
         if ($request->hasFile('cover')) {
             // Hapus file cover lama jika ada
@@ -160,11 +176,13 @@ class WebBookController extends Controller
             $cover->storeAs('public/covers', $coverFileName); // Store file in storage directory
             $book->cover = 'covers/' . $coverFileName; // Store relative path to the image
         }
-
+    
         $book->save();
-
+    
         return redirect()->route('books.index')->with('success', 'Book updated successfully.');
     }
+    
+
 
     public function destroy($id)
     {

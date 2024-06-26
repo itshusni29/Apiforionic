@@ -51,21 +51,25 @@
                                 <div class="card-body">
                                     <h6 class="mb-0 text-uppercase">Pilih Buku</h6>
                                     <div class="my-3 border-top"></div>
-                                    <div class="card-group">
-                                        @foreach ($books as $book)
-                                            <div class="card border-end">
-                                                <img src="{{ asset('storage/' . $book->cover) }}" class="card-img-top" alt="{{ $book->judul }}">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">{{ $book->judul }}</h5>
-                                                    <p class="card-text">{{ $book->deskripsi }}</p>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="selected_books[]" value="{{ $book->id }}" id="{{ $book->id }}">
-                                                        <label class="form-check-label" for="{{ $book->id }}">Select</label>
+                                    @foreach ($books->chunk(6) as $chunk)
+                                        <div class="row">
+                                            @foreach ($chunk as $book)
+                                                <div class="col-md-2">
+                                                    <div class="card border-end">
+                                                        <img src="{{ asset('storage/' . $book->cover) }}" class="card-img-top" alt="{{ $book->judul }}">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">{{ $book->judul }}</h5>
+                                                            <p class="card-text">{{ $book->deskripsi }}</p>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" name="selected_books[]" value="{{ $book->id }}" id="{{ $book->id }}">
+                                                                <label class="form-check-label" for="{{ $book->id }}">Select</label>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
+                                            @endforeach
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
 

@@ -20,15 +20,11 @@
                                 <thead class="table-secondary">
                                     <tr>
                                         <th>No</th>
+                                        <th>Sampul</th>
                                         <th>Judul</th>
                                         <th>Penulis</th>
-                                        <th>Penerbit</th>
-                                        <th>Tahun Terbit</th>
-                                        <th>Kategori</th>
                                         <th>Total Tersedia</th>
-                                        <th>Deskripsi</th>
                                         <th>Penilaian</th>
-                                        <th>Sampul</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -36,21 +32,17 @@
                                     @foreach($books as $book)
                                         <tr>
                                             <td>{{ $book->id }}</td>
-                                            <td>{{ $book->judul }}</td>
-                                            <td>{{ $book->pengarang }}</td>
-                                            <td>{{ $book->penerbit }}</td>
-                                            <td>{{ $book->tahun_terbit }}</td>
-                                            <td>{{ $book->kategori }}</td>
-                                            <td>{{ $book->total_stock }}</td>
-                                            <td>{{ $book->deskripsi }}</td>
-                                            <td>{{ $book->ratings }}</td>
                                             <td>
                                                 @if($book->cover)   
                                                     <img src="{{ asset('storage/' . $book->cover) }}" class="rounded-circle" width="44" height="44" alt="">
                                                 @else
-                                                    No cover available
+                                                    No
                                                 @endif
                                             </td>
+                                            <td>{{ $book->judul }}</td>
+                                            <td>{{ $book->pengarang }}</td>
+                                            <td>{{ $book->total_stock }}</td>
+                                            <td>{{ $book->ratings }}</td>
                                             <td>
                                                 <div class="table-actions d-flex align-items-center gap-3 fs-6">
                                                     <a href="{{ route('books.show', $book->id) }}" class="text-primary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="View"><i class="bi bi-eye-fill"></i></a>
