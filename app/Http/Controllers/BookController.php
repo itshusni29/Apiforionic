@@ -232,10 +232,11 @@ class BookController extends Controller
             return response()->json(['message' => 'PDF file not found in storage'], 404);
         }
 
-        // Return the PDF file as a response
+        // Return the PDF file content
         return response()->file($artikelPath, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . basename($artikelPath) . '"'
         ]);
     }
+
 }

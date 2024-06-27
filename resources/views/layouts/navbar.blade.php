@@ -23,7 +23,9 @@
                 <li class="nav-item dropdown dropdown-large">
                     <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
                         <div class="user-setting d-flex align-items-center gap-1">
-                            <img src="{{ asset('storage/' . Auth::user()->photo_profile) }}" alt="{{ Auth::user()->name }}" class="user-img" >
+                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; font-size: 18px;">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
                             <div class="user-name d-none d-sm-block">{{ Auth::user()->name }}</div>
                         </div>
                     </a>
@@ -31,7 +33,9 @@
                         <li>
                             <a class="dropdown-item" href="#">
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ asset('storage/' . Auth::user()->photo_profile) }}" alt="{{ Auth::user()->name }}" class="rounded-circle" width="60" height="60">
+                                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 24px;">
+                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                    </div>
                                     <div class="ms-3">
                                         <h6 class="mb-0 dropdown-user-name">{{ Auth::user()->name }}</h6>
                                         <small class="mb-0 dropdown-user-designation text-secondary">{{ Auth::user()->roles }}</small>
@@ -39,8 +43,6 @@
                                 </div>
                             </a>
                         </li>
-
-
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="{{ route('users.show', ['user' => Auth::id()]) }}">
@@ -70,11 +72,9 @@
                                 </button>
                             </form>
                         </li>
-
                     </ul>
                 </li>
             </ul>
         </div>
     </nav>
 </header>
-sr

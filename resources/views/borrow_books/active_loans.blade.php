@@ -31,11 +31,9 @@
                                                 <td>{{ $user->name }}</td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>
-                                                    @if($user->photo_profile)
-                                                        <img src="{{ asset('storage/' . $user->photo_profile) }}" class="rounded-circle" width="44" height="44" alt="">
-                                                    @else
-                                                        No Photo
-                                                    @endif
+                                                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; font-size: 18px;">
+                                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <a href="{{ route('borrowed.books.user', $user->id) }}" class="btn btn-primary">View</a>

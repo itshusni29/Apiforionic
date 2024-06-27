@@ -3,35 +3,35 @@
 @section('title', 'Profil Pengguna')
 
 @section('content')
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="card shadow-sm border-0 overflow-hidden">
-                    <div class="card-body">
-                        <div class="profile-avatar text-center">
-                            <img src="{{ asset('storage/' . $user->photo_profile) }}" class="rounded-circle shadow" width="120" height="120" alt="Foto Profil">
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 overflow-hidden">
+                <div class="card-body text-center">
+                    <div class="row justify-content-center">
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 120px; height: 120px; font-size: 48px;">
+                            {{ strtoupper(substr($user->name, 0, 1)) }}
                         </div>
-                        <div class="d-flex align-items-center justify-content-around mt-5 gap-3">
-                            <div class="text-center">
-                                <h4 class="mb-0">10</h4>
-                                <p class="mb-0 text-secondary">Teman</p>
-                            </div>
-                            <div class="text-center">
-                                <h4 class="mb-0">20</h4>
-                                <p class="mb-0 text-secondary">Foto</p>
-                            </div>
-                            <div class="text-center">
-                                <h4 class="mb-0">30</h4>
-                                <p class="mb-0 text-secondary">Komentar</p>
-                            </div>
-                        </div>
-                        <div class="text-center mt-4">
-                            <h4 class="mb-1">{{ $user->name }}</h4>
-                            <p class="mb-0 text-secondary">{{ $user->alamat }}</p>
-                            <div class="mt-4"></div>
-                        </div>
-                        <hr>
                     </div>
+                    <div class="d-flex align-items-center justify-content-around mt-3 gap-3">
+                        <div class="text-center">
+                            <h4 class="mb-0">{{ $totalBooksBorrowed }}</h4>
+                            <p class="mb-0 text-secondary">Total Dipinjam</p>
+                        </div>
+                        <div class="text-center">
+                            <h4 class="mb-0">{{ $totalBooksReturned }}</h4>
+                            <p class="mb-0 text-secondary">Total Dikembalikan</p>
+                        </div>
+                        <div class="text-center">
+                            <h4 class="mb-0">{{ $currentBooksBorrowed }}</h4>
+                            <p class="mb-0 text-secondary">Belum di Kembalikan</p>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <h4 class="mb-1">{{ $user->name }}</h4>
+                        <p class="mb-0 text-secondary">{{ $user->alamat }}</p>
+                    </div>
+                    <hr>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-top">
                             Email
@@ -46,11 +46,12 @@
                             <span class="badge bg-primary rounded-pill">{{ $user->jenis_kelamin }}</span>
                         </li>
                     </ul>
-                    <div class="text-center my-5">
+                    <div class="text-center my-4">
                         <a href="{{ route('users.edit', ['user' => $user->id]) }}" class="btn btn-primary">Ubah Profil</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 @endsection

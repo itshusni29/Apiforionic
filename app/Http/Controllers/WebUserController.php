@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\BookLoan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class WebUserController extends Controller
 {
@@ -29,16 +31,7 @@ class WebUserController extends Controller
             'nomor_telpon' => 'required',
             'roles' => 'nullable',
             'jenis_kelamin' => 'required',
-            'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-
-        $photoPath = null;
-        if ($request->hasFile('photo_profile')) {
-            $photo = $request->file('photo_profile');
-            $fileName = time() . '.' . $photo->getClientOriginalExtension();
-            $photo->storeAs('public/photo_profiles', $fileName); // Store file in storage directory
-            $photoPath = 'photo_profiles/' . $fileName; // Store relative path to the photo profile
-        }
 
         $user = User::create([
             'name' => $request->name,
@@ -48,7 +41,6 @@ class WebUserController extends Controller
             'nomor_telpon' => $request->nomor_telpon,
             'roles' => $request->roles,
             'jenis_kelamin' => $request->jenis_kelamin,
-            'photo_profile' => $photoPath,
         ]);
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
@@ -56,7 +48,18 @@ class WebUserController extends Controller
 
     public function show(User $user)
     {
-        return view('users.show', compact('user'));
+        // Menghitung informasi peminjaman buku
+        $totalBooksBorrowed = BookLoan::where('user_id', $user->id)
+                                      ->where('status', 'Dipinjam')
+                                      ->count();
+
+        $totalBooksReturned = BookLoan::where('user_id', $user->id)
+                                      ->where('status', 'Dikembalikan')
+                                      ->count();
+
+        $currentBooksBorrowed = $totalBooksBorrowed - $totalBooksReturned;
+
+        return view('users.show', compact('user', 'totalBooksBorrowed', 'totalBooksReturned', 'currentBooksBorrowed'));
     }
 
     public function edit(User $user)
@@ -73,23 +76,13 @@ class WebUserController extends Controller
             'nomor_telpon' => 'required',
             'roles' => 'nullable',
             'jenis_kelamin' => 'required',
-            'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Handle password update
         if ($request->filled('password')) {
             $request->validate([
                 'password' => 'required',
             ]);
             $user->password = Hash::make($request->password);
-        }
-
-        $photoPath = $user->photo_profile;
-        if ($request->hasFile('photo_profile')) {
-            $photo = $request->file('photo_profile');
-            $fileName = time() . '.' . $photo->getClientOriginalExtension();
-            $photo->storeAs('public/photo_profiles', $fileName); // Store file in storage directory
-            $photoPath = 'photo_profiles/' . $fileName; // Store relative path to the photo profile
         }
 
         $user->update([
@@ -99,7 +92,6 @@ class WebUserController extends Controller
             'nomor_telpon' => $request->nomor_telpon,
             'roles' => $request->roles,
             'jenis_kelamin' => $request->jenis_kelamin,
-            'photo_profile' => $photoPath,
         ]);
 
         return redirect()->route('users.index')->with('success', 'User updated successfully.');

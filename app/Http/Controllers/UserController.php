@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -14,11 +13,6 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        foreach ($users as $user) {
-            if ($user->photo_profile) {
-                $user->photo_profile = asset('storage/' . $user->photo_profile);
-            }
-        }
         return response()->json(['users' => $users], 200);
     }
 
@@ -41,18 +35,9 @@ class UserController extends Controller
                 'alamat' => 'required|string',
                 'nomor_telpon' => 'required|string',
                 'jenis_kelamin' => 'required|string|in:L,P',
-                'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
         } catch (ValidationException $e) {
             return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
-        }
-
-        $photoPath = null;
-        if ($request->hasFile('photo_profile')) {
-            $photo = $request->file('photo_profile');
-            $fileName = time() . '.' . $photo->getClientOriginalExtension();
-            $photo->storeAs('public/photo_profiles', $fileName); // Store file in storage directory
-            $photoPath = 'photo_profiles/' . $fileName; // Store relative path to the photo profile
         }
 
         $user = User::create([
@@ -62,7 +47,6 @@ class UserController extends Controller
             'alamat' => $request->alamat,
             'nomor_telpon' => $request->nomor_telpon,
             'jenis_kelamin' => $request->jenis_kelamin,
-            'photo_profile' => $photoPath,
         ]);
 
         if ($user) {
@@ -88,23 +72,9 @@ class UserController extends Controller
                 'alamat' => 'sometimes|required|string',
                 'nomor_telpon' => 'sometimes|required|string',
                 'jenis_kelamin' => 'sometimes|required|string|in:L,P',
-                'photo_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
         } catch (ValidationException $e) {
             return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
-        }
-
-        if ($request->hasFile('photo_profile')) {
-            // Delete previous photo if exists
-            if ($user->photo_profile) {
-                Storage::delete('public/' . $user->photo_profile);
-            }
-
-            // Upload new photo
-            $photo = $request->file('photo_profile');
-            $fileName = time() . '.' . $photo->getClientOriginalExtension();
-            $photo->storeAs('public/photo_profiles', $fileName); // Store file in storage directory
-            $user->photo_profile = 'photo_profiles/' . $fileName; // Update the photo profile path
         }
 
         // Update fields only if present in the request
@@ -131,9 +101,6 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        if ($user->photo_profile) {
-            $user->photo_profile = asset('storage/' . $user->photo_profile);
-        }
         return response()->json(['user' => $user], 200);
     }
 
@@ -146,11 +113,6 @@ class UserController extends Controller
 
         try {
             $userName = $user->name; // Get the name of the user being deleted
-
-            // Delete photo file if exists before deleting the user
-            if ($user->photo_profile) {
-                Storage::delete('public/' . $user->photo_profile);
-            }
 
             // Attempt to delete the user
             $user->delete();

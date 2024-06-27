@@ -35,7 +35,9 @@
                                             <td>{{ $user->id }}</td>
                                             <td>
                                                 <div class="d-flex align-items-center gap-3 cursor-pointer">
-                                                    <img src="{{ asset('storage/' . $user->photo_profile) }}" class="rounded-circle" width="44" height="44" alt="">
+                                                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; font-size: 18px;">
+                                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                                    </div>
                                                     <div class="">
                                                         <p class="mb-0">{{ $user->name }}</p>
                                                     </div>
